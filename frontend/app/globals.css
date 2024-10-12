@@ -7,23 +7,21 @@
   --foreground: #171717;
 }
 
-#leftGlow,#rightGlow {
+.glows {
   filter: blur(70px);
-  scale:2;
+  scale: 2;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
-    
   }
 
-  #leftGlow,#rightGlow {
+  .glows {
     filter: blur(40px);
-    scale:2;
+    scale: 2;
   }
-  
 }
 
 body {
@@ -37,5 +35,3 @@ body {
     text-wrap: balance;
   }
 }
-
-

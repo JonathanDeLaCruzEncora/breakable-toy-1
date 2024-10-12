@@ -28,9 +28,7 @@ export default function Search() {
     });
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -46,16 +44,11 @@ export default function Search() {
   return (
     <>
       <div className="relative">
-        <div
-          id="leftGlow"
-          className="absolute left-0 top-0 -z-10 h-16 w-36 -translate-y-3/4 rotate-45 bg-indigo-500"
-        ></div>
-        <div
-          id="rightGlow"
-          className="absolute right-0 top-0 -z-10 h-16 w-72 translate-x-1/4 translate-y-1/2 bg-indigo-500"
-        ></div>
+        <div className="glows absolute left-0 top-0 -z-10 h-16 w-72 -translate-x-1/4 -translate-y-1/2 bg-indigo-500"></div>
+        <div className="glows absolute left-1/2 top-0 -z-10 w-16 -translate-x-1/2 -translate-y-1/2 bg-indigo-500"></div>
+        <div className="glows absolute right-0 top-0 -z-10 h-16 w-72 translate-x-1/4 translate-y-1/2 bg-indigo-500"></div>
 
-        <section className="relative mx-10 max-w-screen-sm rounded-3xl bg-white bg-opacity-70 sm:mx-auto dark:bg-white dark:bg-opacity-20">
+        <section className="relative mx-10 max-w-screen-sm rounded-3xl bg-white bg-opacity-70 shadow-sm shadow-indigo-400/10 sm:mx-auto dark:bg-white dark:bg-opacity-20">
           <form
             className="z-10 flex flex-col items-center px-10 py-10 sm:flex-row sm:justify-between"
             onSubmit={handleSubmit}
@@ -92,15 +85,11 @@ export default function Search() {
             </div>
 
             <button
-              className="mt-6 h-fit cursor-pointer rounded-full border-2 border-indigo-400 bg-indigo-400 px-4 py-1 text-right text-lg font-semibold text-white shadow-lg shadow-indigo-400/50 transition ease-in-out hover:border-indigo-500 hover:bg-indigo-500 active:border-slate-700 active:bg-slate-700 active:shadow-indigo-300 sm:m-0"
+              className="mt-6 flex h-fit cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-indigo-400 bg-indigo-400 px-4 py-1 text-right text-lg font-semibold text-white shadow-lg shadow-indigo-400/50 transition ease-in-out hover:border-indigo-500 hover:bg-indigo-500 active:border-slate-700 active:bg-slate-700 active:shadow-indigo-300 sm:m-0"
               type="submit"
             >
+              <FiSearch className="my-1" size={20} color="white" />
               Search
-              <FiSearch
-                className="my-1 ml-2 inline-block"
-                size={20}
-                color="white"
-              />
             </button>
           </form>
         </section>

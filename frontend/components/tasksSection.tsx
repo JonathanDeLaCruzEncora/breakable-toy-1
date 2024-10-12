@@ -2,6 +2,9 @@
 import React, { useState } from "react";
 import TaskList from "./taskList";
 import { Task } from "./taskList";
+import { MdNavigateNext } from "react-icons/md";
+import { MdNavigateBefore } from "react-icons/md";
+import Pagination from "./pagination";
 
 export default function TasksSection() {
   const memTasks = [
@@ -17,10 +20,9 @@ export default function TasksSection() {
   let numberOfPages = Math.ceil(tasks.length / 5);
 
   return (
-    <section className="z-20">
-      <button>+ New To Do</button>
+    <section className="z-20 mb-72">
       <TaskList />
-      <p>{numberOfPages}</p>
+      <Pagination totalPages={10} />
     </section>
   );
 }
