@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Dropdown from "./dropdown";
+import Dropdown from "./utils/dropdown";
 import { IoSearchOutline } from "react-icons/io5";
 import { FiSearch } from "react-icons/fi";
 
@@ -16,7 +16,6 @@ export default function Search() {
     priority: "All",
     state: "All",
   });
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const priorityOptions = ["All", "High", "Medium", "Low"];
   const stateOptions = ["All", "Completed", "Pending"];

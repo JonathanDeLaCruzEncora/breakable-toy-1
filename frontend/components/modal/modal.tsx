@@ -21,7 +21,7 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
       onClick={handleBackgroundClick}
     >
-      <div className="relative w-full max-w-md rounded-lg bg-white shadow-lg">
+      <div className="relative w-full max-w-md rounded-3xl bg-white shadow-lg">
         <button
           className="absolute right-3 top-3 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-800 active:bg-slate-200"
           onClick={onClose}

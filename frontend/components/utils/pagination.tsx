@@ -5,11 +5,15 @@ import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 
 interface PaginationProps {
   totalPages: number;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
 }
 
-const Pagination = ({ totalPages }: PaginationProps) => {
-  const [currentPage, setCurrentPage] = useState<number>(1);
-
+const Pagination = ({
+  totalPages,
+  currentPage,
+  setCurrentPage,
+}: PaginationProps) => {
   const goToPage = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
