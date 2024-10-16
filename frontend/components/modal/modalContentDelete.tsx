@@ -1,12 +1,14 @@
 import React from "react";
-import { Task } from "../tasks/taskList";
+import { Task } from "../tasks/tasksSection";
 
 export default function ModalContentDelete({
   closeModal,
   task,
+  onDelete,
 }: {
   closeModal: () => void;
   task: Task;
+  onDelete: (id: number) => void;
 }) {
   return (
     <>
@@ -36,7 +38,7 @@ export default function ModalContentDelete({
             Cancel
           </button>
           <button
-            onClick={closeModal}
+            onClick={() => onDelete(task.id)}
             className="mb-5 mt-3 cursor-pointer rounded-full border-2 border-slate-600 bg-slate-700 px-4 py-1 text-center text-lg font-semibold text-white shadow-sm shadow-slate-400/50 transition ease-in-out hover:bg-slate-800 active:border-black active:bg-black active:shadow-md active:shadow-slate-200"
           >
             Delete

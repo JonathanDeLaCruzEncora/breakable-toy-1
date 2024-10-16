@@ -1,43 +1,63 @@
-"use client";
 import React, { useState } from "react";
 import Dropdown from "./utils/dropdown";
 import { IoSearchOutline } from "react-icons/io5";
 import { FiSearch } from "react-icons/fi";
+import { SearchParams, Task } from "./tasks/tasksSection";
+import { getTasks } from "./utils/api";
 
-export default function Search() {
-  interface FormData {
-    name: string;
-    priority: string;
-    state: string;
-  }
-
-  const [formData, setFormData] = useState<FormData>({
+export default function Search({
+  setSearchParams,
+  setNumberOfPages,
+  setCurrentPage,
+  setTasks,
+  setLoadingTasks,
+}: {
+  setSearchParams: (params: SearchParams) => void;
+  setCurrentPage: (val: number) => void;
+  setNumberOfPages: (total: number) => void;
+  searchParams: SearchParams;
+  setTasks: (list: Task[]) => void;
+  setLoadingTasks: (value: boolean) => void;
+}) {
+  const [localSearchParams, setLocalSearchParams] = useState<SearchParams>({
     name: "",
-    priority: "All",
     state: "All",
+    priority: "All",
   });
-
   const priorityOptions = ["All", "High", "Medium", "Low"];
   const stateOptions = ["All", "Completed", "Pending"];
 
-  const handleDropdownChange = (name: string, value: string) => {
-    setFormData({
-      ...formData,
+  const handleDropdownChange = (name: keyof SearchParams, value: string) => {
+    setLocalSearchParams({
+      ...localSearchParams,
       [name]: value,
     });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setLocalSearchParams({
+      ...localSearchParams,
       [name]: value,
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log(formData);
+  const handleSearch = async () => {
+    try {
+      setLoadingTasks(true);
+      setSearchParams(localSearchParams);
+      const { tasks: fetchedTasks, totalPages } = await getTasks(
+        0,
+        localSearchParams,
+      );
+      setTasks(fetchedTasks);
+      setNumberOfPages(totalPages || 1);
+      setCurrentPage(1);
+      setLoadingTasks(false);
+    } catch (error) {
+      setLoadingTasks(false);
+      console.error("Error while searching for tasks");
+    }
   };
 
   return (
@@ -48,10 +68,7 @@ export default function Search() {
         <div className="glows absolute right-0 top-0 -z-10 h-16 w-72 translate-x-1/4 translate-y-1/2 bg-indigo-500"></div>
 
         <section className="relative mx-10 max-w-screen-sm rounded-3xl bg-white bg-opacity-70 shadow-sm shadow-indigo-400/10 sm:mx-auto dark:bg-white dark:bg-opacity-20">
-          <form
-            className="z-10 flex flex-col items-center px-10 py-10 sm:flex-row sm:justify-between"
-            onSubmit={handleSubmit}
-          >
+          <div className="z-10 flex flex-col items-center px-10 py-10 sm:flex-row sm:justify-between">
             <div className="flex flex-1 flex-col gap-6">
               <div className="">
                 <label className="inline-block w-16" htmlFor="nameSearch">
@@ -63,7 +80,7 @@ export default function Search() {
                   id="nameSearch"
                   name="name"
                   type="text"
-                  value={formData.name}
+                  value={localSearchParams.name}
                   onChange={handleChange}
                 />
               </div>
@@ -71,26 +88,26 @@ export default function Search() {
                 id="priorityDropdown"
                 label="Priority"
                 options={priorityOptions}
-                value={formData.priority}
+                value={localSearchParams.priority}
                 onChange={(value) => handleDropdownChange("priority", value)}
               />
               <Dropdown
                 id="stateDropdown"
                 label="State"
                 options={stateOptions}
-                value={formData.state}
+                value={localSearchParams.state}
                 onChange={(value) => handleDropdownChange("state", value)}
               />
             </div>
 
             <button
               className="mt-6 flex h-fit cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-indigo-400 bg-indigo-400 px-4 py-1 text-right text-lg font-semibold text-white shadow-lg shadow-indigo-400/50 transition ease-in-out hover:border-indigo-500 hover:bg-indigo-500 active:border-slate-700 active:bg-slate-700 active:shadow-indigo-300 sm:m-0"
-              type="submit"
+              onClick={handleSearch}
             >
               <FiSearch className="my-1" size={20} color="white" />
               Search
             </button>
-          </form>
+          </div>
         </section>
       </div>
     </>

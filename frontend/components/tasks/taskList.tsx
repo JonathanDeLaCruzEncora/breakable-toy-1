@@ -12,6 +12,13 @@ import { IoReloadOutline } from "react-icons/io5";
 import "react-datepicker/dist/react-datepicker.css";
 import { Task } from "./tasksSection";
 import { FaSpinner } from "react-icons/fa";
+import {
+  markAsDone,
+  markAsUndone,
+  createTask,
+  getTasks,
+  deleteTask,
+} from "../utils/api";
 
 interface NewTask {
   name: string;
@@ -20,41 +27,46 @@ interface NewTask {
 }
 
 interface Props {
+  loadingTasks: boolean;
+  setLoadingTasks: (value: boolean) => void;
   taskList: Task[];
   setTaskList: (list: Task[]) => void;
   currentPage: number;
   setNumberOfPages: (pages: number) => void;
   setCurrentPage: (pages: number) => void;
+  searchParams: object;
+  sortCompleted: boolean;
+  sortPriority: number;
+  sortName: number;
+  sortDueDate: number;
+  setSortCompleted: (val: boolean) => void;
+  setSortPriority: (val: number) => void;
+  setSortName: (val: number) => void;
+  setSortDueDate: (val: number) => void;
 }
 
 export default function TaskList({
   taskList,
+  loadingTasks,
+  setLoadingTasks,
   setTaskList,
   currentPage,
   setNumberOfPages,
   setCurrentPage,
+  searchParams,
+  sortCompleted,
+  sortPriority,
+  sortName,
+  sortDueDate,
+  setSortCompleted,
+  setSortPriority,
+  setSortName,
+  setSortDueDate,
 }: Props) {
-  const [sortedTasks, setSortedTasks] = useState<Task[]>(taskList);
-  const [sortCompleted, setSortCompleted] = useState<boolean>(false);
-  const [sortName, setSortName] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [sortPriority, setSortPriority] = useState<number>(0);
-  const [sortDueDate, setSortDueDate] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [canAdd, setCanAdd] = useState<boolean>(true);
   const [changesDone, setChangesDone] = useState<boolean>(false);
   const datePickerRef = useRef<DatePicker | null>(null);
-
-  useEffect(() => {
-    setLoading(true);
-    const tempTasks = filterCompletedOrUncompletedTasks(
-      taskList,
-      sortCompleted,
-    );
-    setSortedTasks(tempTasks);
-    setNumberOfPages(Math.ceil(tempTasks.length / 6 || 1));
-    setLoading(false);
-  }, [taskList]);
 
   const [newData, setNewData] = useState<NewTask>({
     name: "",
@@ -102,23 +114,38 @@ export default function TaskList({
         setSortName(0);
         break;
       default:
-        setSortCompleted((prev) => {
-          return !prev;
-        });
+        setSortCompleted(!sortCompleted);
 
         break;
     }
   };
 
   useEffect(() => {
+    const fetchSortedTasks = async () => {
+      try {
+        setLoadingTasks(true);
+        const filtersAndSort = {
+          ...searchParams,
+          sortCompleted,
+          sortName,
+          sortPriority,
+          sortDueDate,
+        };
+        const { tasks: fetchedTasks, totalPages } = await getTasks(
+          0,
+          filtersAndSort,
+        );
+        setTaskList(fetchedTasks);
+        setNumberOfPages(totalPages);
+        setLoadingTasks(false);
+      } catch (error) {
+        console.log("Error loading initial tasks: ", error);
+        setLoadingTasks(false);
+      }
+    };
+    fetchSortedTasks();
     setCurrentPage(1);
-    setLoading(true);
-    const newTasks = sortTasks(
-      filterCompletedOrUncompletedTasks(taskList, sortCompleted),
-    );
-    setSortedTasks(newTasks);
-    setNumberOfPages(Math.ceil(newTasks.length / 6) || 1);
-    setLoading(false);
+    setLoadingTasks(false);
   }, [sortName, sortPriority, sortDueDate, sortCompleted]); // Dependencies to trigger sort
 
   const handleDropdownChange = (name: string, value: string) => {
@@ -128,7 +155,7 @@ export default function TaskList({
     });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNewChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewData({
       ...newData,
@@ -136,46 +163,52 @@ export default function TaskList({
     });
   };
 
-  const handleToggleTask = (id: number) => {
-    setSortedTasks(
-      sortedTasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task,
-      ),
-    );
-    setTaskList(
-      taskList.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task,
-      ),
-    );
-    localStorage.setItem("tasks", JSON.stringify(taskList));
+  const handleToggleTask = async (id: number) => {
+    let completedVal;
+    try {
+      setTaskList(
+        taskList.map((task) => {
+          completedVal = task.completed;
+          return task.id === id
+            ? { ...task, completed: !task.completed }
+            : task;
+        }),
+      );
+
+      console.log(completedVal);
+      if (!completedVal) {
+        await markAsDone(id);
+        console.log("done");
+      } else {
+        await markAsUndone(id);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const getNextTaskId = () => {
-    const id = localStorage.getItem("idTask");
-    const currentId = id ? parseInt(id) : 0;
-    localStorage.setItem("idTask", (currentId + 1).toString());
-    return currentId;
-  };
-
-  const handleAddTask = () => {
+  const handleAddTask = async () => {
     if (newData.name && newData.priority) {
-      const id = getNextTaskId();
-      const newTask = {
-        ...newData,
-        completed: false,
-        id: id,
-        createdAt: new Date().toISOString(),
-        completedAt: "",
-      };
-
-      const newSortedTasks = sortTasks([newTask, ...sortedTasks]);
-      setSortedTasks(newSortedTasks);
-      const newList = [newTask, ...taskList];
-      setTaskList(newList);
-      localStorage.setItem("tasks", JSON.stringify(newList));
+      try {
+        const fetchedTask = await createTask(newData);
+        try {
+          const { tasks: fetchedTasks, totalPages } = await getTasks(0, {
+            ...searchParams,
+            sortCompleted: sortCompleted,
+            sortName: sortName,
+            sortPriority: sortPriority,
+            sortDueDate: sortDueDate,
+          });
+          setTaskList(fetchedTasks);
+          setNumberOfPages(totalPages);
+        } catch (error) {
+          console.error("Error while loading tasks");
+        }
+      } catch (error) {
+        console.error("Error while creating  tasks");
+      }
       closeModal();
-      resetSort();
-      if (newList.length % 6 === 1) setNumberOfPages(newList.length / 6 + 1);
+      setCanAdd(true);
     } else {
       setCanAdd(false);
     }
@@ -191,8 +224,32 @@ export default function TaskList({
 
   const handleEditTask = (task: Task) => {};
 
-  const handleDeleteTask = (id: number) => {
-    setSortedTasks(sortedTasks.filter((task) => task.id !== id));
+  const handleDeleteTask = async (id: number) => {
+    setTaskList(taskList.filter((task: Task) => task.id !== id));
+    try {
+      await deleteTask(id);
+      setLoadingTasks(true);
+      let newCurrentPage =
+        taskList.length === 1 ? currentPage - 1 : currentPage;
+      console.log(newCurrentPage);
+      const { tasks: fetchedTasks, totalPages } = await getTasks(
+        newCurrentPage < 0 ? 0 : newCurrentPage - 1,
+        {
+          ...searchParams,
+          sortCompleted,
+          sortName,
+          sortPriority,
+          sortDueDate,
+        },
+      );
+      setCurrentPage(newCurrentPage || 1);
+      setTaskList(fetchedTasks);
+      setNumberOfPages(totalPages || 1);
+      setLoadingTasks(false);
+    } catch (error) {
+      setLoadingTasks(false);
+      console.error(error);
+    }
   };
 
   const sortTasks = (list: Task[]) => {
@@ -296,7 +353,7 @@ export default function TaskList({
                 name="name"
                 type="text"
                 value={newData.name}
-                onChange={handleChange}
+                onChange={handleNewChange}
               />
             </div>
 
@@ -304,7 +361,7 @@ export default function TaskList({
               id="createTaskPriority"
               label="Priority*"
               value={newData.priority || "-"}
-              options={["Low", "Mid", "High"]}
+              options={["Low", "Medium", "High"]}
               onChange={(value) => {
                 handleDropdownChange("priority", value);
               }}
@@ -435,27 +492,25 @@ export default function TaskList({
             </tr>
           </thead>
           <tbody>
-            {sortedTasks.length > 0 &&
-              sortedTasks
-                .slice((currentPage - 1) * 6, currentPage * 6)
-                .map((task) => (
-                  <TaskItem
-                    key={task.id}
-                    task={task}
-                    onToggle={handleToggleTask}
-                    onEdit={handleEditTask}
-                    onDelete={handleDeleteTask}
-                  />
-                ))}
+            {taskList &&
+              taskList.map((task) => (
+                <TaskItem
+                  key={task.id}
+                  task={task}
+                  onToggle={handleToggleTask}
+                  onEdit={handleEditTask}
+                  onDelete={handleDeleteTask}
+                />
+              ))}
           </tbody>
         </table>
-        {loading ? (
+        {loadingTasks ? (
           <>
             <div className="relative mx-auto my-6 h-16 w-16 text-indigo-400">
               <FaSpinner className="absolute h-full w-full animate-spin" />
             </div>
           </>
-        ) : sortedTasks.length === 0 ? (
+        ) : !taskList || taskList.length === 0 ? (
           <span className="my-4 block w-full text-center text-lg text-slate-700">
             No tasks were found...
           </span>

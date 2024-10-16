@@ -118,6 +118,7 @@ export default function TaskItem({
                 >
                   <ModalContentDelete
                     closeModal={() => setIsDeleteModalOpen(false)}
+                    onDelete={onDelete}
                     task={task}
                   />
                 </Modal>
