@@ -19,21 +19,24 @@ export default function TimeAverage() {
             <div className="pb-4 font-normal">By priority:</div>
             <div className="">
               <p className="pb-2">
-                <span className="inline-block w-11">Low:</span>{" "}
+                <span className="inline-block w-10">Low</span>
+                <span>-</span>
                 <span className="inline-block w-14 text-end text-lg font-bold">
                   11:11
                 </span>
                 <span className="tracking-tighter"> mins.</span>
               </p>
               <p className="pb-2">
-                <span className="inline-block w-11">Mid:</span>{" "}
+                <span className="inline-block w-10">Mid</span>
+                <span>-</span>
                 <span className="inline-block w-14 text-end text-lg font-bold">
                   30:15
                 </span>
                 <span className="tracking-tighter"> mins.</span>
               </p>
               <p className="pb-2">
-                <span className="inline-block w-11">High:</span>{" "}
+                <span className="inline-block w-10">High</span>
+                <span>-</span>
                 <span className="inline-block w-14 text-end text-lg font-bold">
                   88:88
                 </span>

@@ -25,7 +25,7 @@ export default function TaskItem({
 
   const handleDropdownChange = (name: string, value: string) => {
     setUpdatedTask({
-      ...task,
+      ...updatedTask,
       [name]: value,
     });
   };
@@ -33,7 +33,7 @@ export default function TaskItem({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setUpdatedTask({
-      ...task,
+      ...updatedTask,
       [name]: value,
     });
   };
@@ -78,7 +78,6 @@ export default function TaskItem({
           <span
             style={{ textDecoration: task.completed ? "line-through" : "none" }}
           >
-            {" "}
             {task.dueDate}
           </span>
         </td>
@@ -104,6 +103,7 @@ export default function TaskItem({
               >
                 <ModalContentEdit
                   updatedTask={updatedTask}
+                  editTask={onEdit}
                   closeModal={() => setIsEditModalOpen(false)}
                   setUpdatedTask={setUpdatedTask}
                   handleChange={handleChange}

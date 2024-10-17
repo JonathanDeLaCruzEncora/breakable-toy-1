@@ -79,6 +79,9 @@ export default function TasksSection() {
   return (
     <>
       <Search
+        sortDueDate={sortDueDate}
+        sortName={sortName}
+        sortPriority={sortPriority}
         setLoadingTasks={setLoadingTasks}
         setTasks={setTasks}
         searchParams={searchParams}

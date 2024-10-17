@@ -2,7 +2,8 @@ import React, { useRef } from "react";
 import Dropdown from "../utils/dropdown";
 import DatePicker from "react-datepicker";
 import { FaRegCalendar } from "react-icons/fa";
-import { Task } from "../tasks/taskList";
+import { Task } from "../tasks/tasksSection";
+import { IoReloadOutline } from "react-icons/io5";
 
 interface Props {
   updatedTask: Task;
@@ -10,6 +11,7 @@ interface Props {
   handleDropdownChange: (name: string, value: string) => void;
   closeModal: () => void;
   setUpdatedTask: (task: Task) => void;
+  editTask: (task: Task) => void;
 }
 
 export default function ModalContentEdit({
@@ -18,6 +20,7 @@ export default function ModalContentEdit({
   handleChange,
   handleDropdownChange,
   closeModal,
+  editTask,
 }: Props) {
   const datePickerRef = useRef<DatePicker | null>(null);
 
@@ -44,7 +47,7 @@ export default function ModalContentEdit({
           id="editTaskPriority"
           label="Priority*"
           value={updatedTask.priority || "-"}
-          options={["Low", "Mid", "High"]}
+          options={["Low", "Medium", "High"]}
           onChange={(value) => {
             handleDropdownChange("priority", value);
           }}
@@ -81,13 +84,31 @@ export default function ModalContentEdit({
               <FaRegCalendar size={20} />
             </div>
           </div>
+
+          <button
+            onClick={() =>
+              setUpdatedTask({
+                ...updatedTask,
+                dueDate: "",
+              })
+            }
+            className=""
+          >
+            <IoReloadOutline
+              className="ml-2 h-full cursor-pointer rounded-md border-2 border-slate-600 bg-slate-700 p-1 text-white hover:bg-slate-800 active:border-slate-800 active:bg-slate-900"
+              size={30}
+            />
+          </button>
         </div>
 
         <button
-          onClick={closeModal}
+          onClick={() => {
+            closeModal();
+            editTask(updatedTask);
+          }}
           className="mb-5 mt-3 flex cursor-pointer items-center justify-center gap-2 self-end rounded-full border-2 border-indigo-400 bg-indigo-400 px-4 py-1 text-center text-lg font-semibold text-white shadow-lg shadow-indigo-400/50 transition ease-in-out hover:border-indigo-500 hover:bg-indigo-500 active:border-slate-700 active:bg-slate-700 active:shadow-indigo-300"
         >
-          Add Task
+          Edit Task
         </button>
       </div>
     </>

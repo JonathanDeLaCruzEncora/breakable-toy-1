@@ -6,14 +6,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
+import java.time.format.DateTimeParseException;
+import java.time.format.DateTimeFormatter;
 
 
 @RestController
@@ -148,6 +148,53 @@ public class TaskController {
                     .collect(Collectors.toList());
         }
 
+        //SORT
+               // Sorting by name
+        if (sortName != 0 && sortPriority == 0 && sortDueDate == 0) {
+            System.out.println("Sorted by Name");
+            filteredTasks = filteredTasks.stream()
+                    .sorted((a, b) -> sortName == 1
+                            ? a.getName().compareTo(b.getName())
+                            : b.getName().compareTo(a.getName()))
+                    .collect(Collectors.toList());
+        }
+
+        // Sorting by priority
+        if (sortPriority != 0 && sortName == 0) {
+            System.out.println("Sorted by Priority");
+            Map<String, List<Task>> groups = groupTasksByPriority(filteredTasks);
+
+            // Sort within each priority group by due date, if requested
+            if (sortDueDate != 0) {
+                for (Map.Entry<String, List<Task>> entry : groups.entrySet()) {
+                    List<Task> sortedByDate = sortByDueDate(entry.getValue(), sortDueDate);
+                    groups.put(entry.getKey(), sortedByDate);
+                }
+            }
+
+            // Collect tasks based on priority order
+            List<Task> result = new ArrayList<>();
+            if (sortPriority == 1) {
+                // Ascending order for priority
+                result.addAll(groups.getOrDefault("High", Collections.emptyList()));
+                result.addAll(groups.getOrDefault("Medium", Collections.emptyList()));
+                result.addAll(groups.getOrDefault("Low", Collections.emptyList()));
+            } else {
+                // Descending order for priority
+                result.addAll(groups.getOrDefault("Low", Collections.emptyList()));
+                result.addAll(groups.getOrDefault("Medium", Collections.emptyList()));
+                result.addAll(groups.getOrDefault("High", Collections.emptyList()));
+            }
+            
+            filteredTasks = result;
+        }
+
+        // Sorting by due date
+        if (sortDueDate != 0 && sortName == 0 && sortPriority == 0 ) {
+            System.out.println("Sorted by DueDate");
+            filteredTasks = sortByDueDate(filteredTasks, sortDueDate);
+        }
+
         // Pagination
         int start = Math.min(page * size, filteredTasks.size());
         int end = Math.min((page + 1) * size, filteredTasks.size());
@@ -178,21 +225,24 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable int id, @RequestBody Task updatedTask) {
+    public ResponseEntity<Task> updateTask(@PathVariable int id, @RequestBody Map<String,String> updatedTask) {
+        System.out.println(updatedTask.get("name")+updatedTask.get("priority")+updatedTask.get("dueDate"));
         Task existingTask = findTaskById(id);
         if (existingTask == null) {
             return ResponseEntity.notFound().build();
         }
 
-        if (updatedTask.getName() != null) {
-            existingTask.setName(updatedTask.getName());
-        }
-        if (updatedTask.getDueDate() != null) {
-            existingTask.setDueDate(updatedTask.getDueDate());
-        }
-        if (updatedTask.getPriority() != null) {
-            existingTask.setPriority(updatedTask.getPriority());
-        }
+        if(
+            updatedTask.get("name") == null ||
+            updatedTask.get("name").isEmpty() || 
+            updatedTask.get("priority") == null || 
+            updatedTask.get("priority").isEmpty())
+        return ResponseEntity.badRequest().build();
+
+
+        existingTask.setName(updatedTask.get("name"));
+        existingTask.setPriority(updatedTask.get("priority"));
+        existingTask.setDueDate(updatedTask.get("dueDate"));
 
         return ResponseEntity.ok(existingTask);
     }
@@ -210,7 +260,7 @@ public class TaskController {
 
     @PostMapping("/{id}/done")
     public ResponseEntity<Void> markTaskAsDone(@PathVariable int id) {
-        System.out.println(id);
+        System.out.println("Marking as completed: " +(id+2));
         Task existingTask = findTaskById(id);
         if (existingTask == null || existingTask.isCompleted()) {
             return ResponseEntity.ok().build(); // No error, nothing to do
@@ -223,6 +273,7 @@ public class TaskController {
 
     @PutMapping("/{id}/undone")
     public ResponseEntity<Void> markTaskAsUndone(@PathVariable int id) {
+        System.out.println("Marking as undone: " +(id+2));
         Task existingTask = findTaskById(id);
         if (existingTask == null || !existingTask.isCompleted()) {
             return ResponseEntity.ok().build(); // No error, nothing to do
@@ -239,4 +290,38 @@ public class TaskController {
                 .findFirst()
                 .orElse(null);
     }
+
+    // Group tasks by priority
+    private Map<String, List<Task>> groupTasksByPriority(List<Task> tasks) {
+        return tasks.stream()
+                .collect(Collectors.groupingBy(Task::getPriority));  // Groups by priority
+    }
+
+    // Sort tasks by due date
+    private List<Task> sortByDueDate(List<Task> tasks, int sortDueDate) {
+        return tasks.stream()
+                .sorted((a, b) -> {
+                    LocalDate dateA = a.getDueDate() == null ||
+                                      a.getDueDate().isEmpty() ? 
+                                        null :
+                                        LocalDate.parse(a.getDueDate());
+                    LocalDate dateB = b.getDueDate() == null ||
+                                      b.getDueDate().isEmpty() ? 
+                                        null :
+                                        LocalDate.parse(b.getDueDate());
+
+                    // Handle null dates
+                    if (dateA == null && dateB == null) return 0;
+                    if (dateA == null) return 1;
+                    if (dateB == null) return -1;
+
+                    return sortDueDate == 1
+                            ? dateB.compareTo(dateA)  // Descending
+                            : dateA.compareTo(dateB); // Ascending
+                })
+                .collect(Collectors.toList());
+    }
+
+   
+
 }

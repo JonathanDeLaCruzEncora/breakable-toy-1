@@ -11,6 +11,9 @@ export default function Search({
   setCurrentPage,
   setTasks,
   setLoadingTasks,
+  sortName,
+  sortPriority,
+  sortDueDate,
 }: {
   setSearchParams: (params: SearchParams) => void;
   setCurrentPage: (val: number) => void;
@@ -18,6 +21,9 @@ export default function Search({
   searchParams: SearchParams;
   setTasks: (list: Task[]) => void;
   setLoadingTasks: (value: boolean) => void;
+  sortName: number;
+  sortPriority: number;
+  sortDueDate: number;
 }) {
   const [localSearchParams, setLocalSearchParams] = useState<SearchParams>({
     name: "",
@@ -46,10 +52,12 @@ export default function Search({
     try {
       setLoadingTasks(true);
       setSearchParams(localSearchParams);
-      const { tasks: fetchedTasks, totalPages } = await getTasks(
-        0,
-        localSearchParams,
-      );
+      const { tasks: fetchedTasks, totalPages } = await getTasks(0, {
+        ...localSearchParams,
+        sortName,
+        sortDueDate,
+        sortPriority,
+      });
       setTasks(fetchedTasks);
       setNumberOfPages(totalPages || 1);
       setCurrentPage(1);

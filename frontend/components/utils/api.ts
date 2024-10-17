@@ -33,6 +33,22 @@ export const createTask = async (task: any) => {
   return response.json(); // Assumes the response is in JSON format
 };
 
+export const editTask = async (task: any) => {
+  const response = await fetch(`${API_BASE_URL}/${task.id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(task),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to edit task");
+  }
+
+  return response.json(); // Assumes the response is in JSON format
+};
+
 // Add more functions as needed (updateTask, deleteTask, etc.)
 export const markAsDone = async (id: number) => {
   const response = await fetch(`${API_BASE_URL}/${id}/done`, {

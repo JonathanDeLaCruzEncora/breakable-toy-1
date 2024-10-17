@@ -57,6 +57,7 @@ const Pagination = ({
           );
           nextList = fetchedTasksPrev;
           setNumberOfPages(numberOfPages - 1);
+          setCurrentPage(page - 1);
         }
         setTaskList(nextList);
         setLoadingTasks(false);

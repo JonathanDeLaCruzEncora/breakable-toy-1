@@ -18,6 +18,7 @@ import {
   createTask,
   getTasks,
   deleteTask,
+  editTask,
 } from "../utils/api";
 
 interface NewTask {
@@ -132,7 +133,7 @@ export default function TaskList({
           sortDueDate,
         };
         const { tasks: fetchedTasks, totalPages } = await getTasks(
-          0,
+          currentPage - 1,
           filtersAndSort,
         );
         setTaskList(fetchedTasks);
@@ -164,23 +165,28 @@ export default function TaskList({
   };
 
   const handleToggleTask = async (id: number) => {
-    let completedVal;
     try {
+      // Find the task to be updated first
+      const taskToUpdate = taskList.find((task) => task.id === id);
+
+      if (!taskToUpdate) return; // Safeguard in case the task is not found
+
+      const completedVal = taskToUpdate.completed;
+
+      // Update the state optimistically
       setTaskList(
-        taskList.map((task) => {
-          completedVal = task.completed;
-          return task.id === id
-            ? { ...task, completed: !task.completed }
-            : task;
-        }),
+        taskList.map((task) =>
+          task.id === id ? { ...task, completed: !task.completed } : task,
+        ),
       );
 
-      console.log(completedVal);
+      // Perform the async action based on the old value of completedVal
       if (!completedVal) {
         await markAsDone(id);
         console.log("done");
       } else {
         await markAsUndone(id);
+        console.log("undone");
       }
     } catch (error) {
       console.error(error);
@@ -222,7 +228,25 @@ export default function TaskList({
     setCurrentPage(1);
   };
 
-  const handleEditTask = (task: Task) => {};
+  const handleEditTask = async (updatedTask: any) => {
+    try {
+      await editTask(updatedTask);
+      setTaskList(
+        taskList.map((t) =>
+          t.id === updatedTask.id
+            ? {
+                ...t,
+                name: updatedTask.name,
+                priority: updatedTask.priority,
+                dueDate: updatedTask.dueDate,
+              }
+            : t,
+        ),
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleDeleteTask = async (id: number) => {
     setTaskList(taskList.filter((task: Task) => task.id !== id));
@@ -432,7 +456,7 @@ export default function TaskList({
           </div>
         </Modal>
       )}
-      <div className="container mx-auto my-10 h-min overflow-hidden overflow-x-auto rounded-xl shadow-sm shadow-indigo-400/10">
+      <div className="container mx-auto my-10 h-[614px] overflow-hidden overflow-x-auto rounded-xl shadow-sm shadow-indigo-400/10">
         <table className="w-full table-fixed overflow-auto">
           <thead
             id="tasksHeader"
@@ -493,6 +517,7 @@ export default function TaskList({
           </thead>
           <tbody>
             {taskList &&
+              !loadingTasks &&
               taskList.map((task) => (
                 <TaskItem
                   key={task.id}
