@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Dropdown from "./utils/dropdown";
 import { IoSearchOutline } from "react-icons/io5";
 import { FiSearch } from "react-icons/fi";
 import { SearchParams, Task } from "./tasks/tasksSection";
 import { getTasks } from "./utils/api";
+import { IoAlertCircleOutline } from "react-icons/io5";
 
 export default function Search({
   setSearchParams,
@@ -11,6 +12,7 @@ export default function Search({
   setCurrentPage,
   setTasks,
   setLoadingTasks,
+  searchParams,
   sortName,
   sortPriority,
   sortDueDate,
@@ -32,6 +34,7 @@ export default function Search({
   });
   const priorityOptions = ["All", "High", "Medium", "Low"];
   const stateOptions = ["All", "Completed", "Pending"];
+  const [hasChanged, setHasChanged] = useState<boolean>(false);
 
   const handleDropdownChange = (name: keyof SearchParams, value: string) => {
     setLocalSearchParams({
@@ -61,12 +64,21 @@ export default function Search({
       setTasks(fetchedTasks);
       setNumberOfPages(totalPages || 1);
       setCurrentPage(1);
-      setLoadingTasks(false);
     } catch (error) {
-      setLoadingTasks(false);
       console.error("Error while searching for tasks");
     }
+    setLoadingTasks(false);
+    setHasChanged(false);
   };
+
+  useEffect(() => {
+    const hasChanged =
+      localSearchParams.name !== searchParams.name ||
+      localSearchParams.priority !== searchParams.priority ||
+      localSearchParams.state !== searchParams.state;
+
+    setHasChanged(hasChanged);
+  }, [localSearchParams]);
 
   return (
     <>
@@ -108,13 +120,18 @@ export default function Search({
               />
             </div>
 
-            <button
-              className="mt-6 flex h-fit cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-indigo-400 bg-indigo-400 px-4 py-1 text-right text-lg font-semibold text-white shadow-lg shadow-indigo-400/50 transition ease-in-out hover:border-indigo-500 hover:bg-indigo-500 active:border-slate-700 active:bg-slate-700 active:shadow-indigo-300 sm:m-0"
-              onClick={handleSearch}
-            >
-              <FiSearch className="my-1" size={20} color="white" />
-              Search
-            </button>
+            <div className="relative mt-6">
+              {hasChanged && (
+                <IoAlertCircleOutline className="absolute left-0 top-1/2 mr-2 size-6 -translate-x-8 -translate-y-1/2 text-red-600" />
+              )}
+              <button
+                className="flex h-fit cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-indigo-400 bg-indigo-400 px-4 py-1 text-right text-lg font-semibold text-white shadow-lg shadow-indigo-400/50 transition ease-in-out hover:border-indigo-500 hover:bg-indigo-500 active:border-slate-700 active:bg-slate-700 active:shadow-indigo-300 sm:m-0"
+                onClick={handleSearch}
+              >
+                <FiSearch className="my-1" size={20} color="white" />
+                Search
+              </button>
+            </div>
           </div>
         </section>
       </div>

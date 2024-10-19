@@ -10,7 +10,7 @@ import DatePicker from "react-datepicker";
 import { FaRegCalendar } from "react-icons/fa";
 import { IoReloadOutline } from "react-icons/io5";
 import "react-datepicker/dist/react-datepicker.css";
-import { Task } from "./tasksSection";
+import { PriorityAvg, Task } from "./tasksSection";
 import { FaSpinner } from "react-icons/fa";
 import {
   markAsDone,
@@ -44,9 +44,15 @@ interface Props {
   setSortPriority: (val: number) => void;
   setSortName: (val: number) => void;
   setSortDueDate: (val: number) => void;
+  setAvgTime: (val: number) => void;
+  setPriorityAvg: (val: PriorityAvg) => void;
+  priorityAvg: PriorityAvg;
 }
 
 export default function TaskList({
+  setAvgTime,
+  setPriorityAvg,
+  priorityAvg,
   taskList,
   loadingTasks,
   setLoadingTasks,
@@ -145,7 +151,6 @@ export default function TaskList({
       }
     };
     fetchSortedTasks();
-    setCurrentPage(1);
     setLoadingTasks(false);
   }, [sortName, sortPriority, sortDueDate, sortCompleted]); // Dependencies to trigger sort
 
@@ -182,10 +187,20 @@ export default function TaskList({
 
       // Perform the async action based on the old value of completedVal
       if (!completedVal) {
-        await markAsDone(id);
+        const { avg, priority } = await markAsDone(id);
+        setAvgTime(avg);
+        setPriorityAvg({
+          ...priorityAvg,
+          [taskToUpdate.priority]: priority,
+        });
         console.log("done");
       } else {
-        await markAsUndone(id);
+        const { avg, priority } = await markAsUndone(id);
+        setAvgTime(avg);
+        setPriorityAvg({
+          ...priorityAvg,
+          [taskToUpdate.priority]: priority,
+        });
         console.log("undone");
       }
     } catch (error) {
@@ -463,19 +478,7 @@ export default function TaskList({
             className="text-md mb-5 bg-slate-200 tracking-widest"
           >
             <tr className="">
-              <th className="w-[10%] cursor-pointer p-0 transition-colors hover:bg-slate-300 active:bg-slate-400">
-                <button
-                  name="completed"
-                  onClick={handleOrderChange}
-                  className={`h-10 w-full cursor-pointer px-2 transition duration-200`}
-                >
-                  <FaCheck
-                    className={`mx-auto rounded-md border-2 border-black transition duration-300 ${sortCompleted ? "bg-black" : ""}`}
-                    size={24}
-                    color={sortCompleted ? "#e2e8f0" : "transparent"}
-                  />
-                </button>
-              </th>
+              <th className="w-[10%] p-0"></th>
               <th className="w-[30%] transition-colors hover:bg-slate-300 active:bg-slate-400">
                 <button
                   name="name"
@@ -486,15 +489,15 @@ export default function TaskList({
                   Name
                 </button>
               </th>
-              <th className="w-[25%] transition-colors hover:bg-slate-300 active:bg-slate-400 sm:w-[20%]">
+              <th
+                className={`relative w-[25%] transition-colors hover:bg-slate-300 active:bg-slate-400 sm:w-[20%]`}
+              >
                 <button
                   name="priority"
                   onClick={handleOrderChange}
                   className="flex h-10 w-full cursor-pointer items-center justify-center gap-2 px-1 text-black transition duration-200 md:px-4"
                 >
-                  <div className="relative size-[20px]">
-                    <SortArrows order={sortPriority} />
-                  </div>
+                  <SortArrows order={sortPriority} />
                   Priority
                 </button>
               </th>

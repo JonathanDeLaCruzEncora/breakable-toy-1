@@ -99,7 +99,10 @@ export default function TaskItem({
             {isEditModalOpen ? (
               <Modal
                 isOpen={isEditModalOpen}
-                onClose={() => setIsEditModalOpen(false)}
+                onClose={() => {
+                  setUpdatedTask({ ...task });
+                  setIsEditModalOpen(false);
+                }}
               >
                 <ModalContentEdit
                   updatedTask={updatedTask}

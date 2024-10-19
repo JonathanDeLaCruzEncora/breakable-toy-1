@@ -3,7 +3,9 @@ import { FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
 
 export default function SortArrows({ order }: { order: number }) {
   return (
-    <div className="relative size-[20px]">
+    <div
+      className={`${order !== 0 ? "text-indigo-600" : "text-black"} relative size-[20px]`}
+    >
       <FaSortUp
         size={20}
         className={`${order === -1 ? "opacity-100" : "opacity-0"} absolute transition duration-300`}

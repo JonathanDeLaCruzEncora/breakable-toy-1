@@ -57,6 +57,12 @@ export const markAsDone = async (id: number) => {
       "Content-Type": "application/json",
     },
   });
+
+  if (!response.ok) {
+    throw new Error("Failed to check task");
+  }
+
+  return response.json();
 };
 
 export const markAsUndone = async (id: number) => {
@@ -66,6 +72,12 @@ export const markAsUndone = async (id: number) => {
       "Content-Type": "application/json",
     },
   });
+
+  if (!response.ok) {
+    throw new Error("Failed to uncheck task");
+  }
+
+  return response.json();
 };
 
 export const deleteTask = async (id: number) => {

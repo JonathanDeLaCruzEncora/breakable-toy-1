@@ -5,6 +5,7 @@ import Pagination from "../utils/pagination";
 import ServerSideTasks from "./serverSideTasks";
 import Search from "../search";
 import { getTasks } from "../utils/api";
+import TimeAverage from "../timeAverage";
 
 export interface Task {
   id: number;
@@ -22,6 +23,12 @@ export interface SearchParams {
   state: string;
 }
 
+export interface PriorityAvg {
+  High: number;
+  Medium: number;
+  Low: number;
+}
+
 export default function TasksSection() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [sortCompleted, setSortCompleted] = useState<boolean>(false);
@@ -32,6 +39,12 @@ export default function TasksSection() {
   const [loadingTasks, setLoadingTasks] = useState<boolean>(true);
   const [numberOfPages, setNumberOfPages] = useState<number>(1);
   const [taskChecked, setTaskChecked] = useState<boolean>(false);
+  const [avgTime, setAvgTime] = useState<number>(0);
+  const [priorityAvg, setPriorityAvg] = useState<PriorityAvg>({
+    High: 0,
+    Medium: 0,
+    Low: 0,
+  });
   const [searchParams, setSearchParams] = useState<SearchParams>({
     name: "",
     priority: "All",
@@ -107,6 +120,9 @@ export default function TasksSection() {
           currentPage={currentPage}
           setNumberOfPages={setNumberOfPages}
           setCurrentPage={setCurrentPage}
+          setAvgTime={setAvgTime}
+          setPriorityAvg={setPriorityAvg}
+          priorityAvg={priorityAvg}
         />
         <Pagination
           sortCompleted={sortCompleted}
@@ -122,6 +138,7 @@ export default function TasksSection() {
           setNumberOfPages={setNumberOfPages}
         />
       </section>
+      <TimeAverage avgTime={avgTime} priorityAvg={priorityAvg} />
     </>
   );
 }

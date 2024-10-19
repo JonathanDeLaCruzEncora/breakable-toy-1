@@ -1,5 +1,10 @@
 package com.example.backend.controller;
 import com.example.backend.model.Task;
+
+import ch.qos.logback.core.joran.conditional.IfAction;
+
+import java.time.Duration;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,18 +17,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
-import java.time.format.DateTimeParseException;
-import java.time.format.DateTimeFormatter;
-
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/todos")
 public class TaskController {
     private List<Task> tasks = new ArrayList<>();
+    private Map<String, Long> avgSums = new HashMap<>();
+    private Map<String, Integer> avgAmounts  = new HashMap<>();
     private int currentId = 1;
 
     public TaskController() {
+        avgSums.put("avg", (long)0 );
+        avgSums.put("Low", (long)0 );
+        avgSums.put("Medium", (long)0 );
+        avgSums.put("High", (long)0 );
+
+        avgAmounts.put("avg",0);
+        avgAmounts.put("Low",0);
+        avgAmounts.put("Medium",0);
+        avgAmounts.put("High",0);
+
         // Sample data
         Task task3 = createTask("Sample Task 3", "Low", "2024-10-15");
         Task task4 = createTask("Sample Task 4", "High", "2024-10-20");
@@ -259,30 +273,122 @@ public class TaskController {
     }
 
     @PostMapping("/{id}/done")
-    public ResponseEntity<Void> markTaskAsDone(@PathVariable int id) {
-        System.out.println("Marking as completed: " +(id+2));
+    public ResponseEntity<Map<String, Integer>> markTaskAsDone(@PathVariable int id) {
+        System.out.println("Marking as completed: " + (id + 2));
         Task existingTask = findTaskById(id);
-        if (existingTask == null || existingTask.isCompleted()) {
-            return ResponseEntity.ok().build(); // No error, nothing to do
+
+        if (existingTask == null) {
+            return ResponseEntity.badRequest().build();
         }
 
+        String taskPriority = existingTask.getPriority();
+        Map<String, Integer> response = new HashMap<>();
+        int avgAmount, priorityAmount;
+        long avgSum, prioritySum;
+
+        if (existingTask.isCompleted()) {
+        //     avgSum = avgSums.getOrDefault("avg", 0L);
+        //     prioritySum = avgSums.getOrDefault(taskPriority, 0L);
+        //     avgAmount = avgAmounts.getOrDefault("avg", 0);
+        //     priorityAmount = avgAmounts.getOrDefault(taskPriority, 0);
+            
+        //     // Ensure no division by zero
+        //     response.put("avg", avgAmount > 0 ? (int) Math.floor(avgSum / avgAmount) : 0);
+        //     response.put("priority", priorityAmount > 0 ? (int) Math.floor(prioritySum / priorityAmount) : 0);
+            response.put("avg", 0);
+            response.put("priority", 0);
+            return ResponseEntity.ok(response); // No need to do anything
+        }
+
+        // Mark task as completed
         existingTask.setCompleted(true);
         existingTask.setCompletedAt(LocalDateTime.now());
-        return ResponseEntity.ok().build();
+
+        avgSum = avgSums.getOrDefault("avg", 0L);
+        prioritySum = avgSums.getOrDefault(taskPriority, 0L);
+        avgAmount = avgAmounts.getOrDefault("avg", 0) + 1;
+        priorityAmount = avgAmounts.getOrDefault(taskPriority, 0) + 1;
+
+        Duration duration = Duration.between(existingTask.getCreatedAt(), existingTask.getCompletedAt());
+        long taskDurationMinutes = duration.toMinutes();
+
+        avgSum += taskDurationMinutes;
+        prioritySum += taskDurationMinutes;
+
+        response.put("avg", (int) Math.ceil((double)avgSum / avgAmount));
+        response.put("priority", (int) Math.ceil((double)prioritySum / priorityAmount));
+
+        avgSums.put("avg", avgSum);
+        avgSums.put(taskPriority, prioritySum);
+        avgAmounts.put("avg", avgAmount);
+        avgAmounts.put(taskPriority, priorityAmount);
+
+        System.out.println("Duration: " + taskDurationMinutes + " AVG: " + response.get("avg") + " PR: " + response.get("priority"));
+        System.out.println("avgAmount: " + avgAmounts.get("avg") + " " + taskPriority + ": " + avgAmounts.get(taskPriority));
+        System.out.println("avgSum: " + avgSums.get("avg") + " " + taskPriority + ": " + avgSums.get(taskPriority));
+
+        return ResponseEntity.ok(response);
     }
+
 
     @PutMapping("/{id}/undone")
-    public ResponseEntity<Void> markTaskAsUndone(@PathVariable int id) {
-        System.out.println("Marking as undone: " +(id+2));
+    public ResponseEntity<Map<String, Integer>> markTaskAsUndone(@PathVariable int id) {
+        System.out.println("Marking as undone: " + (id + 2));
         Task existingTask = findTaskById(id);
-        if (existingTask == null || !existingTask.isCompleted()) {
-            return ResponseEntity.ok().build(); // No error, nothing to do
+
+        if (existingTask == null) {
+            return ResponseEntity.badRequest().build();
         }
 
+        String taskPriority = existingTask.getPriority();
+        Map<String, Integer> response = new HashMap<>();
+        int avgAmount, priorityAmount;
+        long avgSum, prioritySum;
+
+        if (!existingTask.isCompleted()) {
+            // avgSum = avgSums.getOrDefault("avg", 0L);
+            // prioritySum = avgSums.getOrDefault(taskPriority, 0L);
+            // avgAmount = avgAmounts.getOrDefault("avg", 0);
+            // priorityAmount = avgAmounts.getOrDefault(taskPriority, 0);
+
+            // response.put("avg", avgAmount > 0 ? (int) Math.floor(avgSum / avgAmount) : 0);
+            // response.put("priority", priorityAmount > 0 ? (int) Math.floor(prioritySum / priorityAmount) : 0);
+
+            response.put("avg", 0);
+            response.put("priority", 0);
+            return ResponseEntity.ok(response); // No need to do anything
+        }
+
+        // Mark task as undone
+        LocalDateTime completedAt = existingTask.getCompletedAt();
         existingTask.setCompleted(false);
         existingTask.setCompletedAt(null);
-        return ResponseEntity.ok().build();
+
+        avgSum = avgSums.getOrDefault("avg", 0L);
+        prioritySum = avgSums.getOrDefault(taskPriority, 0L);
+        avgAmount = avgAmounts.getOrDefault("avg", 0) - 1;
+        priorityAmount = avgAmounts.getOrDefault(taskPriority, 0) - 1;
+
+        Duration duration = Duration.between(existingTask.getCreatedAt(), completedAt);
+        long taskDurationMinutes = duration.toMinutes();
+
+        avgSum -= taskDurationMinutes;
+        prioritySum -= taskDurationMinutes;
+
+        response.put("avg", avgAmount > 0 ? (int) Math.ceil( (double)avgSum / avgAmount) : 0);
+        response.put("priority", priorityAmount > 0 ? (int) Math.ceil( (double) prioritySum / priorityAmount) : 0);
+
+        avgSums.put("avg", avgSum);
+        avgSums.put(taskPriority, prioritySum);
+        avgAmounts.put("avg", avgAmount < 0 ? 0 : avgAmount);
+        avgAmounts.put(taskPriority, priorityAmount < 0 ? 0 : priorityAmount);
+
+        System.out.println("Duration: " + taskDurationMinutes + " AVG: " + response.get("avg") + " PR: " + response.get("priority"));
+        System.out.println("avgAmount: " + avgAmounts.get("avg") + " " + taskPriority + ": " + avgAmounts.get(taskPriority));
+
+        return ResponseEntity.ok(response);
     }
+
 
     private Task findTaskById(int id) {
         return tasks.stream()
