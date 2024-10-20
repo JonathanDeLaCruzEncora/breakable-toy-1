@@ -1,5 +1,3 @@
-"use client"; // Required for client-side hooks in Next.js
-
 import { ReactNode, MouseEvent } from "react";
 import { IoClose } from "react-icons/io5";
 
@@ -19,7 +17,7 @@ const Modal = ({ isOpen, onClose, children }: ModalProps) => {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-      onClick={handleBackgroundClick}
+      onMouseDown={handleBackgroundClick}
     >
       <div className="relative w-full max-w-md rounded-3xl bg-white shadow-lg">
         <button

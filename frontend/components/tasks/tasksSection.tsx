@@ -2,9 +2,8 @@
 import React, { useEffect, useState } from "react";
 import TaskList from "./taskList";
 import Pagination from "../utils/pagination";
-import ServerSideTasks from "./serverSideTasks";
 import Search from "../search";
-import { getTasks } from "../utils/api";
+import { getAvg, getTasks } from "../utils/api";
 import TimeAverage from "../timeAverage";
 
 export interface Task {
@@ -59,9 +58,11 @@ export default function TasksSection() {
           0,
           searchParams,
         );
-        console.log(fetchedTasks);
         setTasks(fetchedTasks);
-        setNumberOfPages(totalPages);
+        setNumberOfPages(totalPages || 1);
+        const { avg, Low, Medium, High } = await getAvg();
+        setAvgTime(avg);
+        setPriorityAvg({ Low, Medium, High });
         setLoadingTasks(false);
       } catch (error) {
         console.log("Error loading initial tasks: ", error);
@@ -71,17 +72,6 @@ export default function TasksSection() {
 
     fetchInitialTasks();
   }, []);
-
-  // useEffect(() => {
-  //   if (typeof window !== "undefined") {
-  //     const storedTasks = localStorage.getItem("tasks");
-  //     if (storedTasks) {
-  //       const parsedTasks = JSON.parse(storedTasks);
-  //       setTasks(parsedTasks);
-  //       setNumberOfPages(Math.ceil(parsedTasks.length / 6 || 1));
-  //     }
-  //   }
-  // }, []);
 
   useEffect(() => {
     if (taskChecked) {

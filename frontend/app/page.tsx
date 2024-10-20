@@ -1,6 +1,4 @@
-import Search from "@/components/search";
 import TasksSection from "@/components/tasks/tasksSection";
-import TimeAverage from "@/components/timeAverage";
 
 export default function Home() {
   return (

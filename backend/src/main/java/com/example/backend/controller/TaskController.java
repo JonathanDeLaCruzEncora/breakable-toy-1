@@ -1,8 +1,5 @@
 package com.example.backend.controller;
 import com.example.backend.model.Task;
-
-import ch.qos.logback.core.joran.conditional.IfAction;
-
 import java.time.Duration;
 
 import org.springframework.http.HttpStatus;
@@ -19,87 +16,29 @@ import java.util.Map;
 import java.util.HashMap;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:8080")
 @RequestMapping("/todos")
 public class TaskController {
-    private List<Task> tasks = new ArrayList<>();
+    
     private Map<String, Long> avgSums = new HashMap<>();
     private Map<String, Integer> avgAmounts  = new HashMap<>();
-    private int currentId = 1;
-
+    private int currentId  =  1;
+    private List<Task> tasks = new ArrayList<>(
+        //UNCOMMENT THE LINE BELOW FOR SAMPLE DATA AND RESTART THE BACKEND
+        getSampleData()
+    );
+    
+    
     public TaskController() {
-        avgSums.put("avg", (long)0 );
-        avgSums.put("Low", (long)0 );
-        avgSums.put("Medium", (long)0 );
-        avgSums.put("High", (long)0 );
+        avgSums.put("avg", 0L );
+        avgSums.put("Low", 0L );
+        avgSums.put("Medium", 0L );
+        avgSums.put("High", 0L );
 
         avgAmounts.put("avg",0);
         avgAmounts.put("Low",0);
         avgAmounts.put("Medium",0);
         avgAmounts.put("High",0);
-
-        // Sample data
-        Task task3 = createTask("Sample Task 3", "Low", "2024-10-15");
-        Task task4 = createTask("Sample Task 4", "High", "2024-10-20");
-        Task task5 = createTask("Sample Task 5", "Medium", "2024-10-25");
-        Task task6 = createTask("Sample Task 6", "Low", "2024-11-02");
-        Task task7 = createTask("Sample Task 7", "High", "2024-11-05");
-        Task task8 = createTask("Sample Task 8", "Medium", "2024-12-10");
-        Task task9 = createTask("Sample Task 9", "Low", "2024-12-15");
-        Task task10 = createTask("Sample Task 10", "High", "2024-12-20");
-        Task task11 = createTask("Sample Task 11", "Medium", "2024-10-22");
-        Task task12 = createTask("Sample Task 12", "Low", "2024-10-30");
-        Task task13 = createTask("Sample Task 13", "High", "2024-11-10");
-        Task task14 = createTask("Sample Task 14", "Medium", "2024-11-15");
-        Task task15 = createTask("Sample Task 15", "Low", "2024-11-20");
-        Task task16 = createTask("Sample Task 16", "High", "2024-12-01");
-        Task task17 = createTask("Sample Task 17", "Medium", "2024-12-05");
-        Task task18 = createTask("Sample Task 18", "Low", "2024-12-10");
-        Task task19 = createTask("Sample Task 19", "High", "2024-12-15");
-        Task task20 = createTask("Sample Task 20", "Medium", "2024-12-20");
-        Task task21 = createTask("Sample Task 21", "Low", "2024-12-25");
-        Task task22 = createTask("Sample Task 22", "High", "2024-12-30");
-        Task task23 = createTask("Sample Task 23", "Medium", "2024-11-01");
-        Task task24 = createTask("Sample Task 24", "Low", "2024-11-07");
-        Task task25 = createTask("Sample Task 25", "High", "2024-11-12");
-        Task task26 = createTask("Sample Task 26", "Medium", "2024-11-17");
-        Task task27 = createTask("Sample Task 27", "Low", "2024-11-22");
-        Task task28 = createTask("Sample Task 28", "High", "2024-11-27");
-        Task task29 = createTask("Sample Task 29", "Medium", "2024-12-03");
-        Task task30 = createTask("Sample Task 30", "Low", "2024-12-08");
-        Task task31 = createTask("Sample Task 31", "High", "2024-12-13");
-        Task task32 = createTask("Sample Task 32", "Medium", "2024-12-18");
-
-        tasks.add(task3);
-        tasks.add(task4);
-        tasks.add(task5);
-        tasks.add(task6);
-        tasks.add(task7);
-        tasks.add(task8);
-        tasks.add(task9);
-        tasks.add(task10);
-        tasks.add(task11);
-        tasks.add(task12);
-        tasks.add(task13);
-        tasks.add(task14);
-        tasks.add(task15);
-        tasks.add(task16);
-        tasks.add(task17);
-        tasks.add(task18);
-        tasks.add(task19);
-        tasks.add(task20);
-        tasks.add(task21);
-        tasks.add(task22);
-        tasks.add(task23);
-        tasks.add(task24);
-        tasks.add(task25);
-        tasks.add(task26);
-        tasks.add(task27);
-        tasks.add(task28);
-        tasks.add(task29);
-        tasks.add(task30);
-        tasks.add(task31);
-        tasks.add(task32);
 
     }
 
@@ -140,7 +79,6 @@ public class TaskController {
 
         // Filter by completion status
         if (state != null && !state.isEmpty() && !state.equals("All")) {
-            System.out.println("completed");
             filteredTasks = filteredTasks.stream()
                     .filter(task -> task.isCompleted() == (state.equals("Completed")?true:false))
                     .collect(Collectors.toList());
@@ -148,7 +86,6 @@ public class TaskController {
 
         // Filter by name
         if (name != null && !name.isEmpty()) {
-            System.out.println("name");
             filteredTasks = filteredTasks.stream()
                     .filter(task -> task.getName().toLowerCase().contains(name.toLowerCase()))
                     .collect(Collectors.toList());
@@ -156,7 +93,6 @@ public class TaskController {
 
         // Filter by priority
         if (priority != null && !priority.isEmpty() && !priority.equals("All")) {
-            System.out.println("Priority");
             filteredTasks = filteredTasks.stream()
                     .filter(task -> task.getPriority().equalsIgnoreCase(priority))
                     .collect(Collectors.toList());
@@ -165,7 +101,6 @@ public class TaskController {
         //SORT
                // Sorting by name
         if (sortName != 0 && sortPriority == 0 && sortDueDate == 0) {
-            System.out.println("Sorted by Name");
             filteredTasks = filteredTasks.stream()
                     .sorted((a, b) -> sortName == 1
                             ? a.getName().compareTo(b.getName())
@@ -175,7 +110,6 @@ public class TaskController {
 
         // Sorting by priority
         if (sortPriority != 0 && sortName == 0) {
-            System.out.println("Sorted by Priority");
             Map<String, List<Task>> groups = groupTasksByPriority(filteredTasks);
 
             // Sort within each priority group by due date, if requested
@@ -205,7 +139,6 @@ public class TaskController {
 
         // Sorting by due date
         if (sortDueDate != 0 && sortName == 0 && sortPriority == 0 ) {
-            System.out.println("Sorted by DueDate");
             filteredTasks = sortByDueDate(filteredTasks, sortDueDate);
         }
 
@@ -240,7 +173,6 @@ public class TaskController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable int id, @RequestBody Map<String,String> updatedTask) {
-        System.out.println(updatedTask.get("name")+updatedTask.get("priority")+updatedTask.get("dueDate"));
         Task existingTask = findTaskById(id);
         if (existingTask == null) {
             return ResponseEntity.notFound().build();
@@ -267,6 +199,7 @@ public class TaskController {
         Task existingTask = findTaskById(id);
         if(existingTask == null){
             return ResponseEntity.notFound().build();
+
         }
         tasks.remove(existingTask);
         return ResponseEntity.noContent().build();
@@ -274,7 +207,6 @@ public class TaskController {
 
     @PostMapping("/{id}/done")
     public ResponseEntity<Map<String, Integer>> markTaskAsDone(@PathVariable int id) {
-        System.out.println("Marking as completed: " + (id + 2));
         Task existingTask = findTaskById(id);
 
         if (existingTask == null) {
@@ -287,14 +219,6 @@ public class TaskController {
         long avgSum, prioritySum;
 
         if (existingTask.isCompleted()) {
-        //     avgSum = avgSums.getOrDefault("avg", 0L);
-        //     prioritySum = avgSums.getOrDefault(taskPriority, 0L);
-        //     avgAmount = avgAmounts.getOrDefault("avg", 0);
-        //     priorityAmount = avgAmounts.getOrDefault(taskPriority, 0);
-            
-        //     // Ensure no division by zero
-        //     response.put("avg", avgAmount > 0 ? (int) Math.floor(avgSum / avgAmount) : 0);
-        //     response.put("priority", priorityAmount > 0 ? (int) Math.floor(prioritySum / priorityAmount) : 0);
             response.put("avg", 0);
             response.put("priority", 0);
             return ResponseEntity.ok(response); // No need to do anything
@@ -322,18 +246,12 @@ public class TaskController {
         avgSums.put(taskPriority, prioritySum);
         avgAmounts.put("avg", avgAmount);
         avgAmounts.put(taskPriority, priorityAmount);
-
-        System.out.println("Duration: " + taskDurationMinutes + " AVG: " + response.get("avg") + " PR: " + response.get("priority"));
-        System.out.println("avgAmount: " + avgAmounts.get("avg") + " " + taskPriority + ": " + avgAmounts.get(taskPriority));
-        System.out.println("avgSum: " + avgSums.get("avg") + " " + taskPriority + ": " + avgSums.get(taskPriority));
-
         return ResponseEntity.ok(response);
     }
 
 
     @PutMapping("/{id}/undone")
     public ResponseEntity<Map<String, Integer>> markTaskAsUndone(@PathVariable int id) {
-        System.out.println("Marking as undone: " + (id + 2));
         Task existingTask = findTaskById(id);
 
         if (existingTask == null) {
@@ -346,14 +264,6 @@ public class TaskController {
         long avgSum, prioritySum;
 
         if (!existingTask.isCompleted()) {
-            // avgSum = avgSums.getOrDefault("avg", 0L);
-            // prioritySum = avgSums.getOrDefault(taskPriority, 0L);
-            // avgAmount = avgAmounts.getOrDefault("avg", 0);
-            // priorityAmount = avgAmounts.getOrDefault(taskPriority, 0);
-
-            // response.put("avg", avgAmount > 0 ? (int) Math.floor(avgSum / avgAmount) : 0);
-            // response.put("priority", priorityAmount > 0 ? (int) Math.floor(prioritySum / priorityAmount) : 0);
-
             response.put("avg", 0);
             response.put("priority", 0);
             return ResponseEntity.ok(response); // No need to do anything
@@ -382,9 +292,30 @@ public class TaskController {
         avgSums.put(taskPriority, prioritySum);
         avgAmounts.put("avg", avgAmount < 0 ? 0 : avgAmount);
         avgAmounts.put(taskPriority, priorityAmount < 0 ? 0 : priorityAmount);
+        return ResponseEntity.ok(response);
+    }
 
-        System.out.println("Duration: " + taskDurationMinutes + " AVG: " + response.get("avg") + " PR: " + response.get("priority"));
-        System.out.println("avgAmount: " + avgAmounts.get("avg") + " " + taskPriority + ": " + avgAmounts.get(taskPriority));
+    @GetMapping("/average")
+    public ResponseEntity<Map<String, Integer>> getAverage() {
+        Map<String, Integer> response = new HashMap<>();
+
+        response.put("avg", 
+            avgAmounts.get("avg") == 0 
+                ? 0 
+                : (int) Math.ceil((double) avgSums.get("avg") / avgAmounts.get("avg")) );
+        response.put("Low", 
+            avgAmounts.get("Low") == 0 
+                ? 0 
+                : (int) Math.ceil((double) avgSums.get("Low") / avgAmounts.get("Low")) );        
+        response.put("Medium", 
+            avgAmounts.get("Medium") == 0 
+                ? 0 
+                : (int) Math.ceil((double) avgSums.get("Medium") / avgAmounts.get("Medium")) );   
+        response.put("High", 
+            avgAmounts.get("High") == 0 
+                ? 0 
+                : (int) Math.ceil((double) avgSums.get("High") / avgAmounts.get("High")) );   
+
 
         return ResponseEntity.ok(response);
     }
@@ -428,6 +359,97 @@ public class TaskController {
                 .collect(Collectors.toList());
     }
 
-   
 
+
+
+    //JUST FOR DEMO PURPOSES
+    private List<Task> getSampleData(){
+        return new ArrayList<>(List.of(
+            createTask("Task 1", "High", "2024-10-01"),
+            createTask("Task 2", "Medium", "2024-10-02"),
+            createTask("Task 3", "Low", "2024-10-03"),
+            createTask("Task 4", "High", "2024-10-04"),
+            createTask("Task 5", "Medium", "2024-10-05"),
+            createTask("Task 6", "Low", "2024-10-06"),
+            createTask("Task 7", "High", "2024-10-07"),
+            createTask("Task 8", "Medium", "2024-10-08"),
+            createTask("Task 9", "Low", "2024-10-09"),
+            createTask("Task 10", "High", "2024-10-10"),
+            createTask("Task 11", "Medium", "2024-10-11"),
+            createTask("Task 12", "Low", "2024-10-12"),
+            createTask("Task 13", "High", "2024-10-13"),
+            createTask("Task 14", "Medium", "2024-10-14"),
+            createTask("Task 15", "Low", "2024-10-15"),
+            createTask("Task 16", "High", "2024-10-16"),
+            createTask("Task 17", "Medium", "2024-10-17"),
+            createTask("Task 18", "Low", "2024-10-18"),
+            createTask("Task 19", "High", "2024-10-19"),
+            createTask("Task 20", "Medium", "2024-10-20"),
+            createTask("Task 21", "Low", "2024-10-21"),
+            createTask("Task 22", "High", "2024-10-22"),
+            createTask("Task 23", "Medium", "2024-10-23"),
+            createTask("Task 24", "Low", "2024-10-24"),
+            createTask("Task 25", "High", "2024-10-25"),
+            createTask("Task 26", "Medium", "2024-10-26"),
+            createTask("Task 27", "Low", "2024-10-27"),
+            createTask("Task 28", "High", "2024-10-28"),
+            createTask("Task 29", "Medium", "2024-10-29"),
+            createTask("Task 30", "Low", "2024-10-30"),
+            createTask("Task 31", "High", "2024-10-31"),
+            createTask("Task 32", "Medium", ""),
+            createTask("Task 33", "Low", ""),
+            createTask("Task 34", "High", ""),
+            createTask("Task 35", "Medium", ""),
+            createTask("Task 36", "Low", ""),
+            createTask("Task 37", "High", ""),
+            createTask("Task 38", "Medium", ""),
+            createTask("Task 39", "Low", ""),
+            createTask("Task 40", "High", ""),
+            createTask("Task 41", "Medium", ""),
+            createTask("Task 42", "Low", ""),
+            createTask("Task 43", "High", ""),
+            createTask("Task 44", "Medium", ""),
+            createTask("Task 45", "Low", ""),
+            createTask("Task 46", "High", ""),
+            createTask("Task 47", "Medium", ""),
+            createTask("Task 48", "Low", ""),
+            createTask("Task 49", "High", ""),
+            createTask("Task 50", "Medium", ""),
+            createTask("Task 51", "Low", ""),
+            createTask("Task 52", "High", ""),
+            createTask("Task 53", "Medium", ""),
+            createTask("Task 54", "Low", ""),
+            createTask("Task 55", "High", ""),
+            createTask("Task 56", "Medium", ""),
+            createTask("Task 57", "Low", ""),
+            createTask("Task 58", "High", ""),
+            createTask("Task 59", "Medium", ""),
+            createTask("Task 60", "Low", ""),
+            createTask("Task 61", "High", ""),
+            createTask("Task 62", "Medium", ""),
+            createTask("Task 63", "Low", ""),
+            createTask("Task 64", "High", ""),
+            createTask("Task 65", "Medium", ""),
+            createTask("Task 66", "Low", ""),
+            createTask("Task 67", "High", ""),
+            createTask("Task 68", "Medium", ""),
+            createTask("Task 69", "Low", ""),
+            createTask("Task 70", "High", ""),
+            createTask("Task 71", "Medium", ""),
+            createTask("Task 72", "Low", ""),
+            createTask("Task 73", "High", ""),
+            createTask("Task 74", "Medium", ""),
+            createTask("Task 75", "Low", ""),
+            createTask("Task 76", "High", ""),
+            createTask("Task 77", "Medium", ""),
+            createTask("Task 78", "Low", ""),
+            createTask("Task 79", "High", ""),
+            createTask("Task 80", "Medium", ""),
+            createTask("Task 81", "Low", ""),
+            createTask("Task 82", "High", ""),
+            createTask("Task 83", "Medium", ""),
+            createTask("Task 84", "Low", ""),
+            createTask("Task 85", "High", "")
+        ));
+    }
 }

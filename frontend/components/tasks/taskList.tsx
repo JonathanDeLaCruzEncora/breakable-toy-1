@@ -193,7 +193,6 @@ export default function TaskList({
           ...priorityAvg,
           [taskToUpdate.priority]: priority,
         });
-        console.log("done");
       } else {
         const { avg, priority } = await markAsUndone(id);
         setAvgTime(avg);
@@ -201,7 +200,6 @@ export default function TaskList({
           ...priorityAvg,
           [taskToUpdate.priority]: priority,
         });
-        console.log("undone");
       }
     } catch (error) {
       console.error(error);
@@ -270,9 +268,8 @@ export default function TaskList({
       setLoadingTasks(true);
       let newCurrentPage =
         taskList.length === 1 ? currentPage - 1 : currentPage;
-      console.log(newCurrentPage);
       const { tasks: fetchedTasks, totalPages } = await getTasks(
-        newCurrentPage < 0 ? 0 : newCurrentPage - 1,
+        newCurrentPage === 0 ? 0 : newCurrentPage - 1,
         {
           ...searchParams,
           sortCompleted,
@@ -289,84 +286,6 @@ export default function TaskList({
       setLoadingTasks(false);
       console.error(error);
     }
-  };
-
-  const sortTasks = (list: Task[]) => {
-    const initialTasks = list;
-    if (sortName !== 0) {
-      return initialTasks.sort((a, b) =>
-        sortName === 1
-          ? a.name.localeCompare(b.name)
-          : b.name.localeCompare(a.name),
-      );
-    }
-
-    if (sortPriority !== 0) {
-      const groups = groupTasksByPriority(initialTasks);
-      if (sortDueDate !== 0) {
-        for (const priority in groups) {
-          let sorted = sortByDueDate(groups[priority]);
-          groups[priority] = sorted;
-        }
-      }
-      const res: Task[] = [];
-      if (sortPriority === 1) {
-        // Ascending order for priority
-        res.push(
-          ...(groups["High"] || []),
-          ...(groups["Mid"] || []),
-          ...(groups["Low"] || []),
-        );
-      } else {
-        // Descending order for priority
-        res.push(
-          ...(groups["Low"] || []),
-          ...(groups["Mid"] || []),
-          ...(groups["High"] || []),
-        );
-      }
-      return res;
-    }
-
-    if (sortDueDate !== 0) return sortByDueDate(initialTasks);
-    return initialTasks;
-  };
-
-  const groupTasksByPriority = (tasks: Task[]): { [key: string]: Task[] } => {
-    return tasks.reduce<{ [key: string]: Task[] }>(
-      (acc, task) => {
-        const { priority } = task;
-
-        // Initialize the array if it doesn't exist
-        if (!acc[priority]) {
-          acc[priority] = [];
-        }
-
-        // Push the task into the corresponding priority array
-        acc[priority].push(task);
-
-        return acc;
-      },
-      {}, // Initial value as an empty object
-    );
-  };
-
-  const sortByDueDate = (list: Task[]) => {
-    const res = list.sort((a, b) => {
-      const dateA = a.dueDate ? new Date(a.dueDate) : null;
-      const dateB = b.dueDate ? new Date(b.dueDate) : null;
-
-      // Handle empty strings:
-      // Option 1: Empty strings at the end
-      if (!dateA && !dateB) return 0; // Both are empty
-      if (!dateA) return 1; // a is empty, b is not
-      if (!dateB) return -1; // b is empty, a is not
-
-      return sortDueDate === 1
-        ? dateB.getTime() - dateA.getTime()
-        : dateA.getTime() - dateB.getTime();
-    });
-    return res;
   };
 
   return (
@@ -418,14 +337,16 @@ export default function TaskList({
                   type="date"
                   minDate={new Date()}
                   selected={
-                    newData.dueDate ? new Date(newData.dueDate) : new Date()
+                    newData.dueDate
+                      ? new Date(newData.dueDate + "T00:00:00")
+                      : new Date()
                   }
                   value={newData.dueDate}
                   placeholderText="YYYY-MM-DD"
                   onChange={(value: Date | null) => {
                     setNewData({
                       ...newData,
-                      dueDate: value ? value.toISOString().split("T")[0] : "",
+                      dueDate: value ? value.toLocaleDateString("en-CA") : "",
                     });
                   }}
                   ref={datePickerRef}
@@ -471,7 +392,7 @@ export default function TaskList({
           </div>
         </Modal>
       )}
-      <div className="container mx-auto my-10 h-[614px] overflow-hidden overflow-x-auto rounded-xl shadow-sm shadow-indigo-400/10">
+      <div className="container relative mx-auto my-10 h-[612px] overflow-hidden overflow-x-auto rounded-xl bg-slate-50 shadow-sm shadow-indigo-400/10">
         <table className="w-full table-fixed overflow-auto">
           <thead
             id="tasksHeader"
@@ -539,7 +460,7 @@ export default function TaskList({
             </div>
           </>
         ) : !taskList || taskList.length === 0 ? (
-          <span className="my-4 block w-full text-center text-lg text-slate-700">
+          <span className="mt-8 block w-full text-center text-lg text-slate-700">
             No tasks were found...
           </span>
         ) : (

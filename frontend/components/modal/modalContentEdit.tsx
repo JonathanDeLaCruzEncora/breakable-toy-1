@@ -1,4 +1,5 @@
-import React, { useRef } from "react";
+"use client";
+import React, { useRef, useState } from "react";
 import Dropdown from "../utils/dropdown";
 import DatePicker from "react-datepicker";
 import { FaRegCalendar } from "react-icons/fa";
@@ -23,6 +24,7 @@ export default function ModalContentEdit({
   editTask,
 }: Props) {
   const datePickerRef = useRef<DatePicker | null>(null);
+  const [canEdit, setCanEdit] = useState<boolean>(true);
 
   return (
     <>
@@ -65,14 +67,16 @@ export default function ModalContentEdit({
               type="date"
               minDate={new Date()}
               selected={
-                updatedTask.dueDate ? new Date(updatedTask.dueDate) : new Date()
+                updatedTask.dueDate
+                  ? new Date(updatedTask.dueDate + "T00:00:00")
+                  : new Date()
               }
               value={updatedTask.dueDate}
               placeholderText="YYYY-MM-DD"
               onChange={(value: Date | null) => {
                 setUpdatedTask({
                   ...updatedTask,
-                  dueDate: value ? value.toISOString().split("T")[0] : "",
+                  dueDate: value ? value.toLocaleDateString("en-CA") : "",
                 });
               }}
               ref={datePickerRef}
@@ -100,16 +104,29 @@ export default function ModalContentEdit({
             />
           </button>
         </div>
-
-        <button
-          onClick={() => {
-            closeModal();
-            editTask(updatedTask);
-          }}
-          className="mb-5 mt-3 flex cursor-pointer items-center justify-center gap-2 self-end rounded-full border-2 border-indigo-400 bg-indigo-400 px-4 py-1 text-center text-lg font-semibold text-white shadow-lg shadow-indigo-400/50 transition ease-in-out hover:border-indigo-500 hover:bg-indigo-500 active:border-slate-700 active:bg-slate-700 active:shadow-indigo-300"
+        <div
+          className={`mb-5 mt-3 flex items-center ${!canEdit ? "justify-between" : "justify-end"}`}
         >
-          Edit Task
-        </button>
+          {!canEdit && (
+            <span className="block text-red-800">
+              All elements with (*) are required
+            </span>
+          )}
+          <button
+            onClick={() => {
+              if (updatedTask.name && updatedTask.priority) {
+                editTask(updatedTask);
+                closeModal();
+                setCanEdit(true);
+              } else {
+                setCanEdit(false);
+              }
+            }}
+            className="mb-5 mt-3 flex cursor-pointer items-center justify-center gap-2 self-end rounded-full border-2 border-indigo-400 bg-indigo-400 px-4 py-1 text-center text-lg font-semibold text-white shadow-lg shadow-indigo-400/50 transition ease-in-out hover:border-indigo-500 hover:bg-indigo-500 active:border-slate-700 active:bg-slate-700 active:shadow-indigo-300"
+          >
+            Edit Task
+          </button>
+        </div>
       </div>
     </>
   );

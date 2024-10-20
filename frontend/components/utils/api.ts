@@ -1,6 +1,6 @@
 // utils/api.ts
 
-const API_BASE_URL = "http://localhost:8080/todos"; // Adjust the base URL as necessary
+const API_BASE_URL = "http://localhost:9090/todos";
 
 export const getTasks = async (page: number = 0, filtersAndSort: any = {}) => {
   const queryParams = new URLSearchParams({
@@ -14,7 +14,7 @@ export const getTasks = async (page: number = 0, filtersAndSort: any = {}) => {
     throw new Error("Failed to fetch tasks");
   }
 
-  return response.json(); // Assumes the response is in JSON format
+  return response.json();
 };
 
 export const createTask = async (task: any) => {
@@ -30,7 +30,7 @@ export const createTask = async (task: any) => {
     throw new Error("Failed to create task");
   }
 
-  return response.json(); // Assumes the response is in JSON format
+  return response.json();
 };
 
 export const editTask = async (task: any) => {
@@ -46,10 +46,9 @@ export const editTask = async (task: any) => {
     throw new Error("Failed to edit task");
   }
 
-  return response.json(); // Assumes the response is in JSON format
+  return response.json();
 };
 
-// Add more functions as needed (updateTask, deleteTask, etc.)
 export const markAsDone = async (id: number) => {
   const response = await fetch(`${API_BASE_URL}/${id}/done`, {
     method: "POST",
@@ -75,6 +74,18 @@ export const markAsUndone = async (id: number) => {
 
   if (!response.ok) {
     throw new Error("Failed to uncheck task");
+  }
+
+  return response.json();
+};
+
+export const getAvg = async () => {
+  const response = await fetch(`${API_BASE_URL}/average`, {
+    method: "GET",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed load average time");
   }
 
   return response.json();

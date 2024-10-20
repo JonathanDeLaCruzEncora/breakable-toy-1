@@ -5,6 +5,7 @@ import Modal from "../modal/modal";
 import ModalContentEdit from "../modal/modalContentEdit";
 import ModalContentDelete from "../modal/modalContentDelete";
 import { Task } from "./tasksSection";
+import { FaCircle } from "react-icons/fa";
 
 interface TaskProps {
   task: Task;
@@ -46,6 +47,40 @@ export default function TaskItem({
     setFunction(false);
   };
 
+  const calculateWeeks = (due: string) => {
+    const currentDate = new Date();
+
+    // Parse the due date from the string format (assuming dueDateString is in 'YYYY-MM-DD')
+    const dueDate = new Date(due + "T00:00:00"); // Ensuring it's treated as local time
+
+    // Calculate the difference in time (in milliseconds)
+    const timeDiff = dueDate.getTime() - currentDate.getTime();
+
+    // Check if the due date is in the past
+    if (timeDiff < 0) {
+      return 0; // No weeks left if the due date has passed
+    }
+
+    // Calculate the number of weeks left
+    const weeksLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24 * 7)); // Convert to weeks
+
+    return weeksLeft;
+  };
+
+  const chooseColors = (weeks: number) => {
+    if (weeks === 1) {
+      return "text-red-400";
+    }
+    if (weeks === 2) {
+      return "text-amber-400";
+    }
+    if (weeks > 2) {
+      return "text-green-400";
+    }
+
+    return "text-red-800";
+  };
+
   return (
     <>
       <tr className="group border-b border-slate-200 bg-white hover:bg-slate-100">
@@ -61,24 +96,23 @@ export default function TaskItem({
           />
         </td>
         <td className="overflow-auto break-words border-l-2 px-1 sm:px-4">
-          <span
-            style={{ textDecoration: task.completed ? "line-through" : "none" }}
-          >
+          <span className={task.completed ? "line-through" : "none"}>
             {task.name}
           </span>
         </td>
         <td className="px-1 text-center sm:px-4">
-          <span
-            style={{ textDecoration: task.completed ? "line-through" : "none" }}
-          >
+          <span className={task.completed ? "line-through" : "none"}>
             {task.priority}
           </span>
         </td>
-        <td className="px-1 text-center sm:px-4">
+        <td className="font-tr px-1 text-center sm:px-4">
           <span
-            style={{ textDecoration: task.completed ? "line-through" : "none" }}
+            className={`relative tracking-tighter ${task.completed ? "line-through" : "none"}`}
           >
             {task.dueDate}
+            <FaCircle
+              className={`${task.dueDate ? chooseColors(calculateWeeks(task.dueDate)) : "hidden"} absolute -left-5 top-1/2 size-2.5 -translate-y-1/2`}
+            />
           </span>
         </td>
         <td className="text-center">
