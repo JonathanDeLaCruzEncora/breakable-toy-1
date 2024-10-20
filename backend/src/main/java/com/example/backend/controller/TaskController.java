@@ -25,7 +25,7 @@ public class TaskController {
     private int currentId  =  1;
     private List<Task> tasks = new ArrayList<>(
         //UNCOMMENT THE LINE BELOW FOR SAMPLE DATA AND RESTART THE BACKEND
-        getSampleData()
+        //getSampleData()
     );
     
     
