@@ -83,7 +83,7 @@ export default function TaskItem({
 
   return (
     <>
-      <tr className="group border-b border-slate-200 bg-white hover:bg-slate-100">
+      <tr className="group border-b border-slate-200 bg-white hover:bg-slate-100 dark:bg-slate-700 dark:hover:bg-slate-600">
         <td
           onClick={() => onToggle(task.id)}
           className="flex cursor-pointer items-center justify-center py-5 text-center"
@@ -118,14 +118,14 @@ export default function TaskItem({
         <td className="text-center">
           <div className="flex items-center justify-center gap-3 sm:gap-6">
             <button
-              className="active rounded-md border border-slate-200 bg-white p-1 text-emerald-500 hover:bg-slate-50"
+              className="active rounded-md border border-slate-200 bg-white p-1 text-emerald-500 hover:bg-slate-50 dark:border-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700"
               onClick={() => openModal(setIsEditModalOpen)}
             >
               <CiEdit className="size-[20px] sm:size-[26px]" />
             </button>
 
             <button
-              className="rounded-md border border-slate-200 bg-white p-1 text-red-400 hover:bg-slate-50"
+              className="rounded-md border border-slate-200 bg-white p-1 text-red-400 hover:bg-slate-50 dark:border-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700"
               onClick={() => openModal(setIsDeleteModalOpen)}
             >
               <FaRegTrashAlt className="size-[20px] sm:size-[26px]" />

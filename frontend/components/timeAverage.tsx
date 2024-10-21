@@ -51,7 +51,7 @@ export default function TimeAverage({ avgTime, priorityAvg }: Props) {
 
   return (
     <section className="">
-      <div className="absolute bottom-0 left-1/2 flex h-fit w-[calc(100%-5rem)] max-w-screen-sm -translate-x-1/2 flex-col items-center rounded-t-3xl bg-indigo-400 px-10 pb-5 pt-5 text-white">
+      <div className="absolute bottom-0 left-1/2 flex h-fit w-[calc(100%-5rem)] max-w-screen-sm -translate-x-1/2 flex-col items-center rounded-t-3xl bg-indigo-400 px-10 pb-5 pt-5 text-white dark:bg-indigo-500">
         <p className="text-lg font-normal">Average time to finish tasks:</p>
         <div className="flex w-full items-center justify-center pt-4">
           <div className="relative flex-1 pr-4 text-end">

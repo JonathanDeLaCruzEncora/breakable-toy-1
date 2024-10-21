@@ -96,28 +96,28 @@ const Pagination = ({
   };
 
   return (
-    <div className="mx-auto flex w-min items-center justify-center overflow-hidden rounded-2xl border">
+    <div className="mx-auto flex w-min items-center justify-center overflow-hidden rounded-2xl border dark:border-slate-400">
       <button
-        className={`cursor-pointer py-0.5 pl-1 pr-1 text-slate-400 hover:bg-slate-100 active:bg-slate-200 disabled:cursor-default disabled:bg-slate-50 disabled:hover:bg-slate-50 disabled:active:bg-slate-50`}
+        className={`cursor-pointer py-0.5 pl-1 pr-1 text-slate-400 hover:bg-slate-100 active:bg-slate-200 disabled:cursor-default disabled:bg-slate-50 disabled:hover:bg-slate-50 disabled:active:bg-slate-50 dark:border-slate-400 dark:bg-slate-800 dark:hover:bg-slate-900 dark:active:bg-slate-950 dark:disabled:bg-slate-700 dark:disabled:hover:bg-slate-700`}
         onClick={() => goToPage(currentPage - 1)}
         disabled={currentPage === 1}
       >
         <MdNavigateBefore
+          className={`${currentPage === 1 ? "text-slate-400" : "text-slate-500 dark:text-indigo-400"}`}
           size={22}
-          color={currentPage === 1 ? "#94a3b8" : "#64748b"}
         />
       </button>
       {getPages().map((page, index) => (
         <button
           key={index}
-          className={`border-l px-2 ${
+          className={`border-l px-2 dark:border-slate-400 ${
             page === "..."
-              ? "disabled:hover:bg-white disabled:active:bg-white"
+              ? "disabled:hover:bg-white disabled:active:bg-white dark:disabled:bg-slate-700 dark:disabled:hover:bg-slate-700 dark:disabled:active:bg-slate-700"
               : ""
           } ${
             currentPage === page
-              ? "bg-slate-50 font-bold text-indigo-400"
-              : "text-slate-500 hover:bg-slate-50 active:bg-slate-100"
+              ? "bg-slate-50 font-bold text-indigo-400 dark:bg-slate-900 dark:text-indigo-500"
+              : "text-slate-500 hover:bg-slate-50 active:bg-slate-100 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-900 dark:active:bg-slate-950"
           }`}
           onClick={() => typeof page === "number" && goToPage(page)}
           disabled={page === "..." || currentPage === page}
@@ -128,13 +128,13 @@ const Pagination = ({
 
       {/* Next button */}
       <button
-        className={`cursor-pointer border-l py-0.5 pl-1 pr-1 text-slate-400 hover:bg-slate-100 active:bg-slate-200 disabled:cursor-default disabled:bg-slate-50 disabled:hover:bg-slate-50 disabled:active:bg-slate-50`}
+        className={`cursor-pointer border-l py-0.5 pl-1 pr-1 text-slate-400 hover:bg-slate-100 active:bg-slate-200 disabled:cursor-default disabled:bg-slate-50 disabled:hover:bg-slate-50 disabled:active:bg-slate-50 dark:border-slate-400 dark:bg-slate-800 dark:hover:bg-slate-900 dark:active:bg-slate-950 dark:disabled:bg-slate-700 dark:disabled:hover:bg-slate-700`}
         onClick={() => goToPage(currentPage + 1)}
         disabled={currentPage === numberOfPages}
       >
         <MdNavigateNext
+          className={`${currentPage === numberOfPages ? "text-slate-400" : "text-slate-500 dark:text-indigo-400"}`}
           size={22}
-          color={currentPage === numberOfPages ? "#94a3b8" : "#64748b"}
         />
       </button>
     </div>

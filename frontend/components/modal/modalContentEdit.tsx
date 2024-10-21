@@ -35,7 +35,7 @@ export default function ModalContentEdit({
             Name*
           </label>
           <input
-            className="ml-5 inline-block w-full rounded-md border border-slate-300 bg-gradient-to-r from-slate-300/50 to-slate-100 px-2 py-1 tracking-wider placeholder:text-sm placeholder:tracking-wider placeholder:text-slate-500 hover:border-slate-400 hover:from-white hover:to-white focus:bg-none focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2"
+            className="ml-5 inline-block w-full rounded-md border border-slate-300 bg-gradient-to-r from-slate-300/50 to-slate-100 px-2 py-1 tracking-wider placeholder:text-sm placeholder:tracking-wider placeholder:text-slate-500 hover:border-slate-400 hover:from-white hover:to-white focus:bg-none focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 dark:border-slate-400 dark:from-slate-700 dark:to-slate-800 dark:placeholder:text-slate-300 dark:hover:from-slate-700 dark:hover:to-slate-700 dark:focus:bg-slate-700 dark:focus:ring-offset-slate-800"
             placeholder="How will the task be called?"
             id="editTaskName"
             name="name"
@@ -61,7 +61,7 @@ export default function ModalContentEdit({
           </label>
           <div className="relative w-fit">
             <DatePicker
-              className="ml-2 inline-block w-40 cursor-pointer rounded-md border border-slate-300 bg-gradient-to-r from-slate-300/50 to-slate-100 px-2 py-1 tracking-wider placeholder:text-sm placeholder:tracking-wider placeholder:text-slate-500 hover:border-slate-400 hover:from-white hover:to-white focus:bg-none focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2"
+              className="ml-2 inline-block w-40 cursor-pointer rounded-md border border-slate-300 bg-gradient-to-r from-slate-300/50 to-slate-100 px-2 py-1 tracking-wider placeholder:text-sm placeholder:tracking-wider placeholder:text-slate-500 hover:border-slate-400 hover:from-white hover:to-white focus:bg-none focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 dark:border-slate-400 dark:from-slate-700 dark:to-slate-800 dark:placeholder:text-slate-300 dark:hover:from-slate-700 dark:hover:to-slate-700 dark:focus:bg-slate-700 dark:focus:ring-offset-slate-800"
               id="editTaskDate"
               name="dueDate"
               type="date"
@@ -108,7 +108,7 @@ export default function ModalContentEdit({
           className={`mb-5 mt-3 flex items-center ${!canEdit ? "justify-between" : "justify-end"}`}
         >
           {!canEdit && (
-            <span className="block text-red-800">
+            <span className="block text-red-800 dark:text-red-400">
               All elements with (*) are required
             </span>
           )}
@@ -122,7 +122,7 @@ export default function ModalContentEdit({
                 setCanEdit(false);
               }
             }}
-            className="mb-5 mt-3 flex cursor-pointer items-center justify-center gap-2 self-end rounded-full border-2 border-indigo-400 bg-indigo-400 px-4 py-1 text-center text-lg font-semibold text-white shadow-lg shadow-indigo-400/50 transition ease-in-out hover:border-indigo-500 hover:bg-indigo-500 active:border-slate-700 active:bg-slate-700 active:shadow-indigo-300"
+            className="mt-3 flex cursor-pointer items-center justify-center gap-2 self-end rounded-full border-2 border-indigo-400 bg-indigo-400 px-4 py-1 text-center text-lg font-semibold text-white shadow-lg shadow-indigo-400/50 transition ease-in-out hover:border-indigo-500 hover:bg-indigo-500 active:border-slate-700 active:bg-slate-700 active:shadow-indigo-300 dark:border-indigo-500 dark:bg-indigo-500 dark:shadow-none dark:hover:border-indigo-600 dark:hover:bg-indigo-600 dark:active:border-indigo-700 dark:active:bg-indigo-700"
           >
             Edit Task
           </button>

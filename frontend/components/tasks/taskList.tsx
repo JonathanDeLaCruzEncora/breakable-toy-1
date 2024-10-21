@@ -292,7 +292,7 @@ export default function TaskList({
     <div className="container z-10 mx-auto flex max-w-screen-xl flex-col items-start overflow-x-auto px-3 sm:px-20">
       <button
         onClick={openModal}
-        className="mt-16 flex h-fit cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-indigo-400 bg-indigo-400 px-4 py-1 text-center text-lg font-semibold text-white shadow-lg shadow-indigo-400/50 transition ease-in-out hover:border-indigo-500 hover:bg-indigo-500 active:border-slate-700 active:bg-slate-700 active:shadow-indigo-300"
+        className="mt-16 flex h-fit cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-indigo-400 bg-indigo-400 px-4 py-1 text-center text-lg font-semibold text-white shadow-lg shadow-indigo-400/50 transition ease-in-out hover:border-indigo-500 hover:bg-indigo-500 active:border-slate-700 active:bg-slate-700 active:shadow-indigo-300 dark:border-indigo-500 dark:bg-indigo-500 dark:shadow-none dark:hover:border-indigo-600 dark:hover:bg-indigo-600 dark:active:border-indigo-700 dark:active:bg-indigo-700"
       >
         <FaPlus className="" size={20} color="white" /> Create
       </button>
@@ -305,7 +305,7 @@ export default function TaskList({
                 Name*
               </label>
               <input
-                className="ml-5 inline-block w-full rounded-md border border-slate-300 bg-gradient-to-r from-slate-300/50 to-slate-100 px-2 py-1 tracking-wider placeholder:text-sm placeholder:tracking-wider placeholder:text-slate-500 hover:border-slate-400 hover:from-white hover:to-white focus:bg-none focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2"
+                className="ml-5 inline-block w-full rounded-md border border-slate-300 bg-gradient-to-r from-slate-300/50 to-slate-100 px-2 py-1 tracking-wider placeholder:text-sm placeholder:tracking-wider placeholder:text-slate-500 hover:border-slate-400 hover:from-white hover:to-white focus:bg-none focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 dark:border-slate-400 dark:from-slate-700 dark:to-slate-800 dark:placeholder:text-slate-300 dark:hover:from-slate-700 dark:hover:to-slate-700 dark:focus:bg-slate-700 dark:focus:ring-offset-slate-800"
                 placeholder="How will the task be called?"
                 id="createTaskName"
                 name="name"
@@ -331,7 +331,7 @@ export default function TaskList({
               </label>
               <div className="relative w-fit">
                 <DatePicker
-                  className="ml-2 inline-block w-40 cursor-pointer rounded-md border border-slate-300 bg-gradient-to-r from-slate-300/50 to-slate-100 px-2 py-1 tracking-wider placeholder:text-sm placeholder:tracking-wider placeholder:text-slate-500 hover:border-slate-400 hover:from-white hover:to-white focus:bg-none focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2"
+                  className="ml-2 inline-block w-40 cursor-pointer rounded-md border border-slate-300 bg-gradient-to-r from-slate-300/50 to-slate-100 px-2 py-1 tracking-wider placeholder:text-sm placeholder:tracking-wider placeholder:text-slate-500 hover:border-slate-400 hover:from-white hover:to-white focus:bg-none focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 dark:border-slate-400 dark:from-slate-700 dark:to-slate-800 dark:placeholder:text-slate-300 dark:hover:from-slate-700 dark:hover:to-slate-700 dark:focus:bg-slate-700 dark:focus:ring-offset-slate-800"
                   id="createTaskDate"
                   name="dueDate"
                   type="date"
@@ -378,13 +378,13 @@ export default function TaskList({
               className={`mb-5 mt-3 flex items-center ${!canAdd ? "justify-between" : "justify-end"}`}
             >
               {!canAdd && (
-                <span className="block text-red-800">
+                <span className="block text-red-800 dark:text-red-400">
                   All elements with (*) are required
                 </span>
               )}
               <button
                 onClick={handleAddTask}
-                className="flex cursor-pointer items-center justify-center gap-2 self-end rounded-full border-2 border-indigo-400 bg-indigo-400 px-4 py-1 text-center text-lg font-semibold text-white shadow-lg shadow-indigo-400/50 transition ease-in-out hover:border-indigo-500 hover:bg-indigo-500 active:border-slate-700 active:bg-slate-700 active:shadow-indigo-300"
+                className="flex cursor-pointer items-center justify-center gap-2 self-end rounded-full border-2 border-indigo-400 bg-indigo-400 px-4 py-1 text-center text-lg font-semibold text-white shadow-lg shadow-indigo-400/50 transition ease-in-out hover:border-indigo-500 hover:bg-indigo-500 active:border-slate-700 active:bg-slate-700 active:shadow-indigo-300 dark:border-indigo-500 dark:bg-indigo-500 dark:shadow-none dark:hover:border-indigo-600 dark:hover:bg-indigo-600 dark:active:border-indigo-700 dark:active:bg-indigo-700"
               >
                 Add Task
               </button>
@@ -392,48 +392,48 @@ export default function TaskList({
           </div>
         </Modal>
       )}
-      <div className="container relative mx-auto my-10 h-[612px] overflow-hidden overflow-x-auto rounded-xl bg-slate-50 shadow-sm shadow-indigo-400/10">
+      <div className="container relative mx-auto my-10 h-[612px] overflow-hidden overflow-x-auto rounded-xl bg-slate-50 shadow-sm shadow-indigo-400/10 dark:bg-slate-700">
         <table className="w-full table-fixed overflow-auto">
           <thead
             id="tasksHeader"
-            className="text-md mb-5 bg-slate-200 tracking-widest"
+            className="text-md mb-5 bg-slate-200 tracking-widest dark:bg-slate-800"
           >
             <tr className="">
               <th className="w-[10%] p-0"></th>
-              <th className="w-[30%] transition-colors hover:bg-slate-300 active:bg-slate-400">
+              <th className="w-[30%] transition-colors hover:bg-slate-300 active:bg-slate-400 dark:hover:bg-slate-900 dark:active:bg-slate-950">
                 <button
                   name="name"
                   onClick={handleOrderChange}
-                  className="flex h-10 w-full cursor-pointer items-center justify-start gap-2 px-1 text-black transition duration-200 md:px-4"
+                  className="flex h-10 w-full cursor-pointer items-center justify-start gap-2 px-1 text-black transition duration-200 md:px-4 dark:text-white"
                 >
                   <SortArrows order={sortName} />
                   Name
                 </button>
               </th>
               <th
-                className={`relative w-[25%] transition-colors hover:bg-slate-300 active:bg-slate-400 sm:w-[20%]`}
+                className={`relative w-[25%] transition-colors hover:bg-slate-300 active:bg-slate-400 sm:w-[20%] dark:hover:bg-slate-900 dark:active:bg-slate-950`}
               >
                 <button
                   name="priority"
                   onClick={handleOrderChange}
-                  className="flex h-10 w-full cursor-pointer items-center justify-center gap-2 px-1 text-black transition duration-200 md:px-4"
+                  className="flex h-10 w-full cursor-pointer items-center justify-center gap-2 px-1 text-black transition duration-200 md:px-4 dark:text-white"
                 >
                   <SortArrows order={sortPriority} />
                   Priority
                 </button>
               </th>
-              <th className="w-[20%] transition-colors hover:bg-slate-300 active:bg-slate-400">
+              <th className="w-[20%] transition-colors hover:bg-slate-300 active:bg-slate-400 dark:hover:bg-slate-900 dark:active:bg-slate-950">
                 <button
                   name="dueDate"
                   onClick={handleOrderChange}
-                  className="flex h-10 w-full cursor-pointer items-center justify-center gap-2 px-1 text-black transition duration-200 lg:px-4"
+                  className="flex h-10 w-full cursor-pointer items-center justify-center gap-2 px-1 text-black transition duration-200 lg:px-4 dark:text-white"
                 >
                   <SortArrows order={sortDueDate} />
                   Due Date
                 </button>
               </th>
               <th className="w-[15%] sm:w-[20%]">
-                <div className="flex h-10 w-full select-none items-center justify-center rounded-xl px-1 text-black md:px-4">
+                <div className="flex h-10 w-full select-none items-center justify-center rounded-xl px-1 text-black md:px-4 dark:text-white">
                   Actions
                 </div>
               </th>

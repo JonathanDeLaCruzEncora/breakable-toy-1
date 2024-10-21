@@ -4,7 +4,7 @@ import { FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
 export default function SortArrows({ order }: { order: number }) {
   return (
     <div
-      className={`${order !== 0 ? "text-indigo-600" : "text-black"} relative size-[20px]`}
+      className={`${order !== 0 ? "text-indigo-600 dark:text-indigo-400" : "text-black dark:text-white"} relative size-[20px]`}
     >
       <FaSortUp
         size={20}

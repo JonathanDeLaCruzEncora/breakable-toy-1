@@ -58,7 +58,7 @@ export default function Dropdown({
         {label}
       </label>
       <div
-        className={`ml-2 flex w-40 cursor-pointer justify-between rounded-md border border-slate-300 bg-white bg-gradient-to-r from-slate-300/50 to-slate-100 px-2 py-1 tracking-wider hover:border-slate-400 hover:from-white hover:to-white ${isOpen ? "outline-none ring-2 ring-indigo-400 ring-offset-2" : ""}`}
+        className={`ml-2 flex w-40 cursor-pointer justify-between rounded-md border border-slate-300 bg-white bg-gradient-to-r from-slate-300/50 to-slate-100 px-2 py-1 tracking-wider hover:border-slate-400 hover:from-white hover:to-white ${isOpen ? "outline-none ring-2 ring-indigo-400 ring-offset-2 dark:ring-offset-slate-800" : ""} dark:border-slate-400 dark:from-slate-700 dark:to-slate-800 dark:placeholder:text-slate-300 dark:hover:from-slate-700 dark:hover:to-slate-700 dark:focus:bg-slate-700 dark:focus:ring-offset-slate-800`}
         onClick={toggleDropdown}
       >
         {value}
@@ -67,11 +67,11 @@ export default function Dropdown({
 
       {isOpen && (
         <ul
-          className={`absolute bottom-0 left-0 z-10 mt-2 w-40 translate-x-[4.5rem] translate-y-full divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-100 bg-white object-cover tracking-wider shadow-lg`}
+          className={`absolute bottom-0 left-0 z-10 mt-2 w-40 translate-x-[4.5rem] translate-y-full divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-100 bg-white object-cover tracking-wider shadow-lg dark:divide-slate-400 dark:border-slate-600 dark:bg-slate-800`}
         >
           {options.map((option, index) => (
             <li
-              className="cursor-pointer select-none px-4 py-1 first:pt-2 last:pb-2 hover:bg-slate-100"
+              className="cursor-pointer select-none px-4 py-1 first:pt-2 last:pb-2 hover:bg-slate-100 dark:hover:bg-slate-600"
               key={index}
               onClick={() => handleSelectOption(option)}
             >
