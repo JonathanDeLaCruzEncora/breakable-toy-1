@@ -53,7 +53,8 @@ First clone the git repository <br>
 2. The next command will install the necessary dependencies:
    `npm install`
 
-3. Once the last command has finished, run the next line to start the frontend:
+3. Once the last command has finished, run the next lines to build and start the frontend:
+   `npm run build`
    `npm run start`
 
 After this the app should be running 🙏.
