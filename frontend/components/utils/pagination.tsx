@@ -70,14 +70,12 @@ const Pagination = ({
 
   const getPages = () => {
     let pages = [];
-
-    if (numberOfPages <= 5) {
-      for (let i = 1; i <= numberOfPages; i++) {
+    pages.push(1);
+    if (numberOfPages <= 6) {
+      for (let i = 2; i <= numberOfPages; i++) {
         pages.push(i);
       }
     } else {
-      pages.push(1);
-
       if (currentPage > 3) pages.push("...");
       for (
         let i = Math.max(2, currentPage - 1);

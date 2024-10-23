@@ -143,7 +143,7 @@ export default function TaskList({
           filtersAndSort,
         );
         setTaskList(fetchedTasks);
-        setNumberOfPages(totalPages);
+        setNumberOfPages(totalPages || 1);
         setLoadingTasks(false);
       } catch (error) {
         console.log("Error loading initial tasks: ", error);
@@ -460,7 +460,7 @@ export default function TaskList({
             </div>
           </>
         ) : !taskList || taskList.length === 0 ? (
-          <span className="mt-8 block w-full text-center text-lg text-slate-700">
+          <span className="dark: mt-8 block w-full text-center text-lg text-slate-100 text-slate-700">
             No tasks were found...
           </span>
         ) : (
