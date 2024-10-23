@@ -460,7 +460,7 @@ export default function TaskList({
             </div>
           </>
         ) : !taskList || taskList.length === 0 ? (
-          <span className="dark: mt-8 block w-full text-center text-lg text-slate-100 text-slate-700">
+          <span className="dark: mt-8 block w-full text-center text-lg text-slate-700 dark:text-slate-100">
             No tasks were found...
           </span>
         ) : (
