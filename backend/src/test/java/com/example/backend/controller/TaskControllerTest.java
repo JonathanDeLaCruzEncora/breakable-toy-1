@@ -113,9 +113,6 @@ public class TaskControllerTest {
         Task mockTask = new Task();
         mockTask.setId(1);
 
-        List<Task> tasks = new ArrayList<>();
-        tasks.add(mockTask);
-
         when(taskService.findTaskById(1)).thenReturn(mockTask);
 
         ResponseEntity<Void> response = taskController.deleteTask(1);

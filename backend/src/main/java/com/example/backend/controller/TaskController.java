@@ -110,7 +110,6 @@ public class TaskController {
 
         try {
             Task newTask = taskService.createTask(name, priority, dueDate == null ? "" : dueDate);
-            System.out.println(taskService.tasks.size());
             return ResponseEntity.status(HttpStatus.CREATED).body(newTask);
 
         } catch (Exception e) {
