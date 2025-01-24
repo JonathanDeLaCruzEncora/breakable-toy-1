@@ -51,12 +51,27 @@ public class TaskService {
      * @param sortDueDate the sorting order (1 for ascending, -1 for descending)
      * @return the sorted list of tasks
      */
-    public List<Task> sortByDueDate(List<Task> tasks, int sortDueDate) {
+    
+    private List<Task> sortByDueDate(List<Task> tasks, int sortDueDate) {
         return tasks.stream()
                 .sorted((a, b) -> {
-                    LocalDate dateA = a.getDueDate() == null || a.getDueDate().isEmpty() ? null : LocalDate.parse(a.getDueDate());
-                    LocalDate dateB = b.getDueDate() == null || b.getDueDate().isEmpty() ? null : LocalDate.parse(b.getDueDate());
-                    return dateA.compareTo(dateB);
+                    LocalDate dateA = a.getDueDate() == null ||
+                                    a.getDueDate().isEmpty() ? 
+                                        null :
+                                        LocalDate.parse(a.getDueDate());
+                    LocalDate dateB = b.getDueDate() == null ||
+                                    b.getDueDate().isEmpty() ? 
+                                        null :
+                                        LocalDate.parse(b.getDueDate());
+
+                    // Handle null dates
+                    if (dateA == null && dateB == null) return 0;
+                    if (dateA == null) return 1;
+                    if (dateB == null) return -1;
+
+                    return sortDueDate == 1
+                            ? dateB.compareTo(dateA)  // Descending
+                            : dateA.compareTo(dateB); // Ascending
                 })
                 .collect(Collectors.toList());
     }
@@ -88,7 +103,7 @@ public class TaskService {
      * @return the paginated list of tasks
      */
     public List<Task> paginateTasks(List<Task> tasks, int page, int size) {
-        int start = page * size;
+        int start = (page < 0 ? 0 : page ) * size;
         int end = Math.min(start + size, tasks.size());
         return tasks.subList(start, end);
     }
@@ -234,3 +249,4 @@ public class TaskService {
             .collect(Collectors.toList());
     }
 }
+

@@ -2,12 +2,11 @@ import { ReactNode, MouseEvent } from "react";
 import { IoClose } from "react-icons/io5";
 
 type ModalProps = {
-  isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
 };
 
-const Modal = ({ isOpen, onClose, children }: ModalProps) => {
+const Modal = ({ onClose, children }: ModalProps) => {
   const handleBackgroundClick = (e: MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       onClose();
