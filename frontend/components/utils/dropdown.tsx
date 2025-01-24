@@ -6,22 +6,22 @@ import { IoIosArrowDown } from "react-icons/io";
 interface DropdownProps {
   id: string;
   label: string;
-  options: string[];
   value: string;
+  options: string[];
   onChange: (value: string) => void;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({
-  id,
-  label,
+export default function Dropdown({
   options,
   value,
   onChange,
-}) => {
+  label,
+  id,
+}: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleSelect = (option: string) => {
+  const handleSelectOption = (option: string) => {
     onChange(option);
     setIsOpen(false);
   };
@@ -59,51 +59,27 @@ const Dropdown: React.FC<DropdownProps> = ({
       </label>
       <div
         className={`ml-2 flex w-40 cursor-pointer justify-between rounded-md border border-slate-300 bg-white bg-gradient-to-r from-slate-300/50 to-slate-100 px-2 py-1 tracking-wider hover:border-slate-400 hover:from-white hover:to-white ${isOpen ? "outline-none ring-2 ring-indigo-400 ring-offset-2 dark:ring-offset-slate-800" : ""} dark:border-slate-400 dark:from-slate-700 dark:to-slate-800 dark:placeholder:text-slate-300 dark:hover:from-slate-700 dark:hover:to-slate-700 dark:focus:bg-slate-700 dark:focus:ring-offset-slate-800`}
+        onClick={toggleDropdown}
       >
-        <button
-          id={id}
-          className="h-full w-full text-left"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-haspopup="listbox"
-          aria-expanded={isOpen}
-        >
-          {value}
-        </button>
+        {value}
         <IoIosArrowDown className="inline-block" size={24} />
       </div>
 
       {isOpen && (
         <ul
           className={`absolute bottom-0 left-0 z-10 mt-2 w-40 translate-x-[4.5rem] translate-y-full divide-y divide-slate-200 overflow-hidden rounded-2xl border border-slate-100 bg-white object-cover tracking-wider shadow-lg dark:divide-slate-400 dark:border-slate-600 dark:bg-slate-800`}
-          role="listbox"
         >
-          {options.map((option) => (
-            <DropdownItem
-              key={option}
-              option={option}
-              onSelect={handleSelect}
-            />
+          {options.map((option, index) => (
+            <li
+              className="cursor-pointer select-none px-4 py-1 first:pt-2 last:pb-2 hover:bg-slate-100 dark:hover:bg-slate-600"
+              key={index}
+              onClick={() => handleSelectOption(option)}
+            >
+              {option}
+            </li>
           ))}
         </ul>
       )}
     </div>
   );
-};
-
-const DropdownItem = ({
-  option,
-  onSelect,
-}: {
-  option: string;
-  onSelect: (option: string) => void;
-}) => (
-  <li
-    className="cursor-pointer select-none px-4 py-1 first:pt-2 last:pb-2 hover:bg-slate-100 dark:hover:bg-slate-600"
-    onClick={() => onSelect(option)}
-    role="option"
-  >
-    {option}
-  </li>
-);
-
-export default Dropdown;
+}

@@ -1,34 +1,29 @@
 import React, { useState } from "react";
-import { FaRegTrashAlt, FaCircle } from "react-icons/fa";
+import { FaRegCalendar, FaRegTrashAlt } from "react-icons/fa";
 import { CiEdit } from "react-icons/ci";
 import Modal from "../modal/modal";
 import ModalContentEdit from "../modal/modalContentEdit";
 import ModalContentDelete from "../modal/modalContentDelete";
-import { Task } from "../utils/types";
-import useTasks from "./useTasks";
+import { Task } from "./tasksSection";
+import { FaCircle } from "react-icons/fa";
 
 interface TaskProps {
   task: Task;
+  onEdit: (task: Task) => void;
+  onToggle: (id: number) => void;
+  onDelete: (id: number) => void;
 }
 
-/**
- * TaskItem component to display a single task with options to edit, delete, and toggle completion status.
- *
- * @param {TaskProps} props - The component props.
- * @param {Task} props.task - The task to display.
- */
-export default function TaskItem({ task }: TaskProps) {
-  const { handleToggleTask } = useTasks();
+export default function TaskItem({
+  task,
+  onEdit,
+  onToggle,
+  onDelete,
+}: TaskProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [updatedTask, setUpdatedTask] = useState<Task>({ ...task });
 
-  /**
-   * Handle changes in dropdown selections for the task.
-   *
-   * @param {string} name - The name of the field to update.
-   * @param {string} value - The new value for the field.
-   */
   const handleDropdownChange = (name: string, value: string) => {
     setUpdatedTask({
       ...updatedTask,
@@ -36,11 +31,6 @@ export default function TaskItem({ task }: TaskProps) {
     });
   };
 
-  /**
-   * Handle changes in text input fields for the task.
-   *
-   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event.
-   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setUpdatedTask({
@@ -49,42 +39,45 @@ export default function TaskItem({ task }: TaskProps) {
     });
   };
 
-  /**
-   * Open a modal.
-   *
-   * @param {function} setFunction - The function to set the modal state.
-   */
   const openModal = (setFunction: (value: boolean) => void) => {
     setFunction(true);
   };
 
-  /**
-   * Calculate the number of weeks left until the task's due date.
-   *
-   * @param {string} due - The due date of the task.
-   * @returns {number} The number of weeks left.
-   */
+  const closeModal = (setFunction: (value: boolean) => void) => {
+    setFunction(false);
+  };
+
   const calculateWeeks = (due: string) => {
     const currentDate = new Date();
-    const dueDate = new Date(due + "T00:00:00");
+
+    // Parse the due date from the string format (assuming dueDateString is in 'YYYY-MM-DD')
+    const dueDate = new Date(due + "T00:00:00"); // Ensuring it's treated as local time
+
+    // Calculate the difference in time (in milliseconds)
     const timeDiff = dueDate.getTime() - currentDate.getTime();
 
-    if (timeDiff < 0) return 0;
+    // Check if the due date is in the past
+    if (timeDiff < 0) {
+      return 0; // No weeks left if the due date has passed
+    }
 
-    const weeksLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24 * 7));
+    // Calculate the number of weeks left
+    const weeksLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24 * 7)); // Convert to weeks
+
     return weeksLeft;
   };
 
-  /**
-   * Choose the color based on the number of weeks left until the due date.
-   *
-   * @param {number} weeks - The number of weeks left.
-   * @returns {string} The color class.
-   */
   const chooseColors = (weeks: number) => {
-    if (weeks === 1) return "text-red-400";
-    if (weeks === 2) return "text-amber-400";
-    if (weeks > 2) return "text-green-400";
+    if (weeks === 1) {
+      return "text-red-400";
+    }
+    if (weeks === 2) {
+      return "text-amber-400";
+    }
+    if (weeks > 2) {
+      return "text-green-400";
+    }
+
     return "text-red-800";
   };
 
@@ -92,7 +85,7 @@ export default function TaskItem({ task }: TaskProps) {
     <>
       <tr className="group border-b border-slate-200 bg-white hover:bg-slate-100 dark:bg-slate-700 dark:hover:bg-slate-600">
         <td
-          onClick={() => handleToggleTask(task.id)}
+          onClick={() => onToggle(task.id)}
           className="flex cursor-pointer items-center justify-center py-5 text-center"
         >
           <input
@@ -103,18 +96,18 @@ export default function TaskItem({ task }: TaskProps) {
           />
         </td>
         <td className="overflow-auto break-words border-l-2 px-1 sm:px-4">
-          <span className={task.completed ? "line-through" : ""}>
+          <span className={task.completed ? "line-through" : "none"}>
             {task.name}
           </span>
         </td>
         <td className="px-1 text-center sm:px-4">
-          <span className={task.completed ? "line-through" : ""}>
+          <span className={task.completed ? "line-through" : "none"}>
             {task.priority}
           </span>
         </td>
         <td className="font-tr px-1 text-center sm:px-4">
           <span
-            className={`relative tracking-tighter ${task.completed ? "line-through" : ""}`}
+            className={`relative tracking-tighter ${task.completed ? "line-through" : "none"}`}
           >
             {task.dueDate}
             <FaCircle
@@ -127,8 +120,6 @@ export default function TaskItem({ task }: TaskProps) {
             <button
               className="active rounded-md border border-slate-200 bg-white p-1 text-emerald-500 hover:bg-slate-50 dark:border-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700"
               onClick={() => openModal(setIsEditModalOpen)}
-              aria-label="Edit Task"
-              data-testid="edit-button"
             >
               <CiEdit className="size-[20px] sm:size-[26px]" />
             </button>
@@ -136,13 +127,12 @@ export default function TaskItem({ task }: TaskProps) {
             <button
               className="rounded-md border border-slate-200 bg-white p-1 text-red-400 hover:bg-slate-50 dark:border-slate-400 dark:bg-slate-800 dark:hover:bg-slate-700"
               onClick={() => openModal(setIsDeleteModalOpen)}
-              aria-label="Delete Task"
-              data-testid="delete-button"
             >
               <FaRegTrashAlt className="size-[20px] sm:size-[26px]" />
             </button>
-            {isEditModalOpen && (
+            {isEditModalOpen ? (
               <Modal
+                isOpen={isEditModalOpen}
                 onClose={() => {
                   setUpdatedTask({ ...task });
                   setIsEditModalOpen(false);
@@ -150,21 +140,28 @@ export default function TaskItem({ task }: TaskProps) {
               >
                 <ModalContentEdit
                   updatedTask={updatedTask}
+                  editTask={onEdit}
                   closeModal={() => setIsEditModalOpen(false)}
                   setUpdatedTask={setUpdatedTask}
                   handleChange={handleChange}
                   handleDropdownChange={handleDropdownChange}
                 />
               </Modal>
-            )}
-
-            {isDeleteModalOpen && (
-              <Modal onClose={() => setIsDeleteModalOpen(false)}>
-                <ModalContentDelete
-                  closeModal={() => setIsDeleteModalOpen(false)}
-                  task={task}
-                />
-              </Modal>
+            ) : isDeleteModalOpen ? (
+              <>
+                <Modal
+                  isOpen={isDeleteModalOpen}
+                  onClose={() => setIsDeleteModalOpen(false)}
+                >
+                  <ModalContentDelete
+                    closeModal={() => setIsDeleteModalOpen(false)}
+                    onDelete={onDelete}
+                    task={task}
+                  />
+                </Modal>
+              </>
+            ) : (
+              <></>
             )}
           </div>
         </td>
