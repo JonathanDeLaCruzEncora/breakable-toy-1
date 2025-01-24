@@ -1,5 +1,10 @@
 import { useApp } from "../AppContext";
 
+/**
+ * Custom hook to manage only the task list elements from useApp.
+ *
+ * @returns {Object} The task list state and functions to manage it.
+ */
 export const useTaskList = () => {
   const {
     tasks,

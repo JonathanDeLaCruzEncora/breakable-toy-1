@@ -8,6 +8,9 @@ import TableHeader from "./tableHeader";
 import CreateTaskModal from "./createTaskModal";
 import { useTaskList } from "../hooks/useTaskList";
 
+/**
+ * TaskList component to display a list of tasks with sorting and filtering options.
+ */
 export default function TaskList() {
   const {
     tasks,

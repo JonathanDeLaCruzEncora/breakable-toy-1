@@ -8,6 +8,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import { NewTask } from "../utils/types";
 import useTasks from "./useTasks";
 
+/**
+ * CreateTaskModal component to create a new task.
+ */
 const CreateTaskModal: React.FC = () => {
   const { handleAddTask } = useTasks();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -19,6 +22,12 @@ const CreateTaskModal: React.FC = () => {
     dueDate: "",
   });
 
+  /**
+   * Handle changes in dropdown selections for the new task.
+   *
+   * @param {string} name - The name of the field to update.
+   * @param {string} value - The new value for the field.
+   */
   const handleDropdownChange = (name: string, value: string) => {
     setNewData({
       ...newData,
@@ -26,6 +35,11 @@ const CreateTaskModal: React.FC = () => {
     });
   };
 
+  /**
+   * Handle changes in text input fields for the new task.
+   *
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event.
+   */
   const handleNewChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewData({
@@ -34,16 +48,25 @@ const CreateTaskModal: React.FC = () => {
     });
   };
 
+  /**
+   * Open the modal to create a new task.
+   */
   const openModal = () => {
     setIsModalOpen(true);
   };
 
+  /**
+   * Close the modal and reset the form.
+   */
   const closeModal = () => {
     setCanAdd(true);
     setIsModalOpen(false);
     setNewData({ name: "", priority: "", dueDate: "" });
   };
 
+  /**
+   * Handle the add task action.
+   */
   const handleAddClick = async () => {
     if (newData.name && newData.priority) {
       handleAddTask(newData);

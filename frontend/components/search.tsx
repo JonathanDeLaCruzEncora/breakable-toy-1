@@ -7,6 +7,9 @@ import { SearchParams } from "./utils/types";
 import { getTasks } from "./utils/api";
 import { useSearch } from "./hooks/useSearch";
 
+/**
+ * Search component to filter tasks based on name, priority, and state.
+ */
 export default function Search() {
   const {
     setSearchParams,
@@ -29,6 +32,12 @@ export default function Search() {
   const stateOptions = ["All", "Completed", "Pending"];
   const [hasChanged, setHasChanged] = useState<boolean>(false);
 
+  /**
+   * Handle changes in dropdown selections.
+   *
+   * @param {keyof SearchParams} name - The name of the search parameter.
+   * @param {string} value - The value of the search parameter.
+   */
   const handleDropdownChange = (name: keyof SearchParams, value: string) => {
     setLocalSearchParams({
       ...localSearchParams,
@@ -36,6 +45,11 @@ export default function Search() {
     });
   };
 
+  /**
+   * Handle changes in text input fields.
+   *
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event.
+   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setLocalSearchParams({
@@ -44,6 +58,9 @@ export default function Search() {
     });
   };
 
+  /**
+   * Handle the search action to fetch tasks based on search parameters.
+   */
   const handleSearch = async () => {
     try {
       setLoadingTasks(true);
@@ -125,6 +142,16 @@ export default function Search() {
   );
 }
 
+/**
+ * TextInput component for search input fields.
+ *
+ * @param {Object} props - The component props.
+ * @param {string} props.id - The id of the input field.
+ * @param {string} props.label - The label for the input field.
+ * @param {string} props.value - The value of the input field.
+ * @param {function} props.onChange - The change handler for the input field.
+ * @param {string} props.placeholder - The placeholder text for the input field.
+ */
 const TextInput = ({
   id,
   label,

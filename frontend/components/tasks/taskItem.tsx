@@ -11,12 +11,24 @@ interface TaskProps {
   task: Task;
 }
 
+/**
+ * TaskItem component to display a single task with options to edit, delete, and toggle completion status.
+ *
+ * @param {TaskProps} props - The component props.
+ * @param {Task} props.task - The task to display.
+ */
 export default function TaskItem({ task }: TaskProps) {
   const { handleToggleTask } = useTasks();
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
   const [updatedTask, setUpdatedTask] = useState<Task>({ ...task });
 
+  /**
+   * Handle changes in dropdown selections for the task.
+   *
+   * @param {string} name - The name of the field to update.
+   * @param {string} value - The new value for the field.
+   */
   const handleDropdownChange = (name: string, value: string) => {
     setUpdatedTask({
       ...updatedTask,
@@ -24,6 +36,11 @@ export default function TaskItem({ task }: TaskProps) {
     });
   };
 
+  /**
+   * Handle changes in text input fields for the task.
+   *
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event.
+   */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setUpdatedTask({
@@ -32,10 +49,21 @@ export default function TaskItem({ task }: TaskProps) {
     });
   };
 
+  /**
+   * Open a modal.
+   *
+   * @param {function} setFunction - The function to set the modal state.
+   */
   const openModal = (setFunction: (value: boolean) => void) => {
     setFunction(true);
   };
 
+  /**
+   * Calculate the number of weeks left until the task's due date.
+   *
+   * @param {string} due - The due date of the task.
+   * @returns {number} The number of weeks left.
+   */
   const calculateWeeks = (due: string) => {
     const currentDate = new Date();
     const dueDate = new Date(due + "T00:00:00");
@@ -47,6 +75,12 @@ export default function TaskItem({ task }: TaskProps) {
     return weeksLeft;
   };
 
+  /**
+   * Choose the color based on the number of weeks left until the due date.
+   *
+   * @param {number} weeks - The number of weeks left.
+   * @returns {string} The color class.
+   */
   const chooseColors = (weeks: number) => {
     if (weeks === 1) return "text-red-400";
     if (weeks === 2) return "text-amber-400";

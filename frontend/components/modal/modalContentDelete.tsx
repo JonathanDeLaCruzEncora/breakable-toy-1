@@ -7,6 +7,13 @@ interface ModalContentDeleteProps {
   task: Task;
 }
 
+/**
+ * ModalContentDelete component to confirm the deletion of a task.
+ *
+ * @param {ModalContentDeleteProps} props - The component props.
+ * @param {function} props.closeModal - The function to close the modal.
+ * @param {Task} props.task - The task to be deleted.
+ */
 const ModalContentDelete = ({ closeModal, task }: ModalContentDeleteProps) => {
   const { handleDeleteTask } = useTasks();
 
@@ -50,6 +57,14 @@ const ModalContentDelete = ({ closeModal, task }: ModalContentDeleteProps) => {
   );
 };
 
+/**
+ * Button component for modal actions.
+ *
+ * @param {Object} props - The component props.
+ * @param {function} props.onClick - The function to handle button click.
+ * @param {string} props.label - The button label.
+ * @param {string} props.className - The button CSS classes.
+ */
 const Button = ({
   onClick,
   label,

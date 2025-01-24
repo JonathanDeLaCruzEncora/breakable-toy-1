@@ -6,7 +6,19 @@ type ModalProps = {
   children: ReactNode;
 };
 
+/**
+ * Modal component to display content in a modal dialog.
+ *
+ * @param {ModalProps} props - The component props.
+ * @param {function} props.onClose - The function to close the modal.
+ * @param {ReactNode} props.children - The content to display inside the modal.
+ */
 const Modal = ({ onClose, children }: ModalProps) => {
+  /**
+   * Handle background click to close the modal if the background is clicked.
+   *
+   * @param {MouseEvent<HTMLDivElement>} e - The mouse event.
+   */
   const handleBackgroundClick = (e: MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       onClose();

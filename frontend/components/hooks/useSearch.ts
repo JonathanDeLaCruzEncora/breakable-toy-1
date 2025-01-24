@@ -1,5 +1,10 @@
 import { useApp } from "../AppContext";
 
+/**
+ * Custom hook to manage only the search elements from useApp.
+ *
+ * @returns {Object} The search state and functions to manage it.
+ */
 export const useSearch = () => {
   const {
     setSearchParams,

@@ -15,6 +15,16 @@ interface Props {
   setUpdatedTask: (task: Task) => void;
 }
 
+/**
+ * ModalContentEdit component to edit an existing task.
+ *
+ * @param {Props} props - The component props.
+ * @param {Task} props.updatedTask - The task to be updated.
+ * @param {function} props.handleChange - The function to handle input changes.
+ * @param {function} props.handleDropdownChange - The function to handle dropdown changes.
+ * @param {function} props.closeModal - The function to close the modal.
+ * @param {function} props.setUpdatedTask - The function to set the updated task.
+ */
 export default function ModalContentEdit({
   updatedTask,
   setUpdatedTask,
@@ -26,6 +36,9 @@ export default function ModalContentEdit({
   const datePickerRef = useRef<DatePicker | null>(null);
   const [canEdit, setCanEdit] = useState<boolean>(true);
 
+  /**
+   * Handle the edit task action.
+   */
   const handleEditClick = () => {
     if (updatedTask.name && updatedTask.priority) {
       handleEditTask(updatedTask);

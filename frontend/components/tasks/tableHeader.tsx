@@ -2,6 +2,15 @@ import React from "react";
 import SortArrows from "../utils/sortArrows";
 import { useApp } from "../AppContext";
 
+/**
+ * Helper function to create a header button with sorting functionality.
+ *
+ * @param {string} name - The name of the header.
+ * @param {string} displayText - The display text for the header.
+ * @param {number} order - The current sort order.
+ * @param {function} handleOrderChange - The function to handle order change.
+ * @returns {JSX.Element} The header button element.
+ */
 const headerButton = (
   name: string,
   displayText: string,
@@ -18,6 +27,9 @@ const headerButton = (
   </button>
 );
 
+/**
+ * TableHeader component to display the headers of the task table with sorting options.
+ */
 const TableHeader: React.FC = () => {
   const {
     sortName,
@@ -30,6 +42,11 @@ const TableHeader: React.FC = () => {
     setSortCompleted,
   } = useApp();
 
+  /**
+   * Handle the change in sort order when a header button is clicked.
+   *
+   * @param {React.MouseEvent<HTMLButtonElement>} e - The click event.
+   */
   const handleOrderChange = (e: React.MouseEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
 

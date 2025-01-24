@@ -10,6 +10,12 @@ import {
 
 const AppContext = createContext<ContextProps | undefined>(undefined);
 
+/**
+ * AppProvider component to provide application-wide context.
+ *
+ * @param {Object} props - The component props.
+ * @param {React.ReactNode} props.children - The child components.
+ */
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -88,6 +94,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
+/**
+ * Custom hook to use the AppContext.
+ *
+ * @returns {ContextProps} The context values.
+ * @throws Will throw an error if used outside of AppProvider.
+ */
 export const useApp = (): ContextProps => {
   const context = useContext(AppContext);
   if (!context) {

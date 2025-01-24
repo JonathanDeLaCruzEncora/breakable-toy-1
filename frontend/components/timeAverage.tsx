@@ -2,6 +2,10 @@
 import React from "react";
 import { useAverageTime } from "./hooks/useAverageTime";
 
+/**
+ * Component to display the average time to finish tasks.
+ * It shows the overall average time and the average time by priority.
+ */
 export default function TimeAverage() {
   const { avgTime, priorityAvg } = useAverageTime();
 
@@ -30,6 +34,13 @@ export default function TimeAverage() {
   );
 }
 
+/**
+ * Component to display the average time for a specific priority.
+ *
+ * @param {Object} props - The component props.
+ * @param {string} props.label - The priority label.
+ * @param {number} props.time - The average time for the priority.
+ */
 const PriorityTime = ({ label, time }: { label: string; time: number }) => (
   <p className="pb-2">
     <span className="inline-block w-10">{label}</span>
@@ -42,6 +53,13 @@ const PriorityTime = ({ label, time }: { label: string; time: number }) => (
   </p>
 );
 
+/**
+ * Component to display time in hours and minutes.
+ *
+ * @param {Object} props - The component props.
+ * @param {number} props.min - The time in minutes.
+ * @param {boolean} [props.isPriority=false] - Whether the time is for a priority.
+ */
 export const DisplayTime = ({
   min,
   isPriority = false,
